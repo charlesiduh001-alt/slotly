@@ -27,6 +27,8 @@ function nextOpenDay(): string {
 
 async function shot(page: Page, name: string, clipHeight?: number) {
   await page.waitForLoadState("networkidle");
+  // Let entrance animations finish.
+  await page.waitForTimeout(1800);
   // Hide the Next.js dev-tools badge.
   await page.addStyleTag({ content: "nextjs-portal { display: none !important; }" });
   const clip = clipHeight ? { x: 0, y: 0, width: page.viewportSize()!.width, height: clipHeight } : undefined;
@@ -39,7 +41,11 @@ async function main() {
   const browser = await chromium.launch({ executablePath: process.env.BROWSER_PATH ?? EDGE });
   const date = nextOpenDay();
 
-  const desktop = await browser.newContext({ viewport: { width: 1280, height: 800 }, deviceScaleFactor: 1.5 });
+  const desktop = await browser.newContext({
+    viewport: { width: 1280, height: 800 },
+    deviceScaleFactor: 1.5,
+    colorScheme: "light",
+  });
   const page = await desktop.newPage();
 
   await page.goto(BASE);
@@ -69,11 +75,27 @@ async function main() {
   await page.goto(`${BASE}/admin/services`);
   await shot(page, "admin-services");
 
+  // Dark theme (picked up from the OS preference by the theme script).
+  const dark = await browser.newContext({
+    viewport: { width: 1280, height: 800 },
+    deviceScaleFactor: 1.5,
+    colorScheme: "dark",
+  });
+  const darkPage = await dark.newPage();
+  await darkPage.goto(BASE);
+  await shot(darkPage, "home-dark", 720);
+  await darkPage.goto(`${BASE}/booking/SL-DEMO2B`);
+  await shot(darkPage, "confirmation-dark");
+  await darkPage.goto(BASE);
+  await darkPage.locator("#services").scrollIntoViewIfNeeded();
+  await shot(darkPage, "services-dark");
+
   const mobile = await browser.newContext({
     viewport: { width: 390, height: 844 },
     deviceScaleFactor: 2,
     isMobile: true,
     hasTouch: true,
+    colorScheme: "light",
   });
   const phone = await mobile.newPage();
   await phone.goto(BASE);

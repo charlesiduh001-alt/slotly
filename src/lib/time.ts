@@ -30,6 +30,29 @@ export function nowInBusinessTz(now: Date = new Date()): { date: string; minutes
   };
 }
 
+/** Offset of the business timezone from UTC, in minutes, at a given instant. */
+function tzOffsetMinutes(instant: Date): number {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: BUSINESS_TZ,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(instant);
+  const get = (type: string) => Number(parts.find((p) => p.type === type)?.value);
+  const asUtc = Date.UTC(get("year"), get("month") - 1, get("day"), get("hour"), get("minute"));
+  return Math.round((asUtc - instant.getTime()) / 60000);
+}
+
+/** Convert a business-local date + minute-of-day to the real UTC instant. */
+export function toUtc(date: string, minutes: number): Date {
+  const [y, m, d] = date.split("-").map(Number);
+  const guess = Date.UTC(y, m - 1, d, 0, minutes);
+  return new Date(guess - tzOffsetMinutes(new Date(guess)) * 60000);
+}
+
 export function addDays(date: string, days: number): string {
   const d = new Date(`${date}T00:00:00Z`);
   d.setUTCDate(d.getUTCDate() + days);

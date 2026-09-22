@@ -22,7 +22,7 @@ export async function NextAvailableCard() {
   const next = service ? await findNextAvailable(service) : null;
 
   return (
-    <div className="card relative p-6 shadow-xl shadow-plum-900/5">
+    <div className="glass relative rounded-3xl p-6 shadow-2xl shadow-plum-900/10">
       <p className="text-sm font-medium text-muted">Next available</p>
 
       {service && next ? (
@@ -45,13 +45,13 @@ export async function NextAvailableCard() {
           </p>
           <ul className="mt-2 grid grid-cols-3 gap-2">
             {next.slots.slice(0, MAX_SLOTS).map((start, i) => (
-              <li key={start}>
+              <li key={start} className="animate-rise" style={{ animationDelay: `${0.5 + i * 0.06}s` }}>
                 <Link
                   href={`/book/details?service=${service.id}&date=${next.date}&time=${start}`}
                   className={`block rounded-xl border px-3 py-2 text-center text-sm font-medium transition ${
                     i === 0
-                      ? "border-plum-600 bg-plum-600 text-white hover:bg-plum-700"
-                      : "border-line text-ink hover:border-plum-600 hover:bg-plum-50"
+                      ? "border-plum-600 bg-plum-600 text-white shadow-md shadow-plum-600/25 hover:bg-plum-700"
+                      : "border-line bg-surface/60 text-ink hover:-translate-y-0.5 hover:border-accent hover:bg-plum-50"
                   }`}
                 >
                   {formatMinutes(start)}
@@ -62,14 +62,14 @@ export async function NextAvailableCard() {
 
           <Link
             href={`/book?service=${service.id}&date=${next.date}`}
-            className="mt-5 flex items-center justify-between rounded-xl bg-plum-50 px-4 py-3 text-sm font-medium text-plum-700 transition hover:bg-plum-100"
+            className="group mt-5 flex items-center justify-between rounded-xl bg-plum-50 px-4 py-3 text-sm font-medium text-accent transition hover:bg-plum-100"
           >
             <span>
               {next.slots.length > MAX_SLOTS
                 ? `See all ${next.slots.length} times`
                 : "See other days"}
             </span>
-            <span aria-hidden>→</span>
+            <span aria-hidden className="transition-transform group-hover:translate-x-1">→</span>
           </Link>
         </>
       ) : (

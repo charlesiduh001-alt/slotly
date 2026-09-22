@@ -10,7 +10,7 @@ export function Steps({ current }: { current: 1 | 2 | 3 }) {
           <li key={label} className="flex items-center gap-2" aria-current={state === "current" ? "step" : undefined}>
             <span
               className={`grid size-7 place-items-center rounded-full text-xs font-semibold ${
-                state === "todo" ? "border border-line bg-white text-muted" : "bg-plum-600 text-white"
+                state === "todo" ? "border border-line bg-surface text-muted" : "bg-plum-600 text-white"
               }`}
             >
               {state === "done" ? "✓" : n}

@@ -67,7 +67,7 @@ export default async function DetailsPage({ searchParams }: PageProps<"/book/det
         </dl>
         <Link
           href={`/book?service=${service.id}&date=${date}`}
-          className="mt-5 inline-block text-sm font-medium text-plum-700 underline-offset-4 hover:underline"
+          className="mt-5 inline-block text-sm font-medium text-accent underline-offset-4 hover:underline"
         >
           ← Change time
         </Link>

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { DateStrip } from "@/components/date-strip";
 import { Steps } from "@/components/steps";
 import { formatDuration, formatPrice } from "@/lib/format";
 import {
@@ -59,60 +60,33 @@ export default async function BookPage({ searchParams }: PageProps<"/book">) {
       </div>
 
       <h1 className="mt-10 font-display text-2xl font-semibold">Choose a date</h1>
-      <div className="-mx-4 mt-4 overflow-x-auto px-4 pb-2">
-        <ul className="flex gap-2">
-          {dates.map((d) => {
-            const closed = closedDays.has(dayOfWeek(d));
-            const selected = d === date;
-            const [weekday, day, month] = formatDate(d, "short").replace(",", "").split(" ");
-            const classes = `flex w-16 shrink-0 flex-col items-center rounded-2xl border py-3 text-sm transition ${
-              selected
-                ? "border-plum-600 bg-plum-600 text-white"
-                : closed
-                  ? "cursor-not-allowed border-line bg-sand/50 text-muted/60"
-                  : "border-line bg-white hover:border-plum-600"
-            }`;
-            const inner = (
-              <>
-                <span className="text-xs">{weekday}</span>
-                <span className="text-lg font-semibold">{day}</span>
-                <span className="text-xs">{month}</span>
-              </>
-            );
-            return (
-              <li key={d}>
-                {closed ? (
-                  <span className={classes} title="Closed">
-                    {inner}
-                  </span>
-                ) : (
-                  <Link
-                    href={`/book?service=${service.id}&date=${d}`}
-                    className={classes}
-                    aria-current={selected ? "date" : undefined}
-                    aria-label={formatDate(d)}
-                    scroll={false}
-                  >
-                    {inner}
-                  </Link>
-                )}
-              </li>
-            );
-          })}
-        </ul>
-      </div>
+      <DateStrip
+        selected={date}
+        options={dates.map((d) => {
+          const [weekday, day, month] = formatDate(d, "short").replace(",", "").split(" ");
+          return {
+            date: d,
+            weekday,
+            day,
+            month,
+            label: formatDate(d),
+            closed: closedDays.has(dayOfWeek(d)),
+            href: `/book?service=${service.id}&date=${d}`,
+          };
+        })}
+      />
 
       {date && (
         <>
           <h2 className="mt-8 font-display text-2xl font-semibold">Available times</h2>
           <p className="mt-1 text-sm text-muted">{formatDate(date)}</p>
           {slots.length ? (
-            <ul className="mt-4 grid grid-cols-3 gap-2 sm:grid-cols-5">
-              {slots.map((start) => (
-                <li key={start}>
+            <ul key={date} className="mt-4 grid grid-cols-3 gap-2 sm:grid-cols-5">
+              {slots.map((start, i) => (
+                <li key={start} className="animate-rise" style={{ animationDelay: `${Math.min(i, 15) * 0.03}s` }}>
                   <Link
                     href={`/book/details?service=${service.id}&date=${date}&time=${start}`}
-                    className="block rounded-xl border border-line bg-white px-3 py-2.5 text-center text-sm font-medium transition hover:border-plum-600 hover:bg-plum-50"
+                    className="block rounded-xl border border-line bg-surface px-3 py-2.5 text-center text-sm font-medium transition hover:-translate-y-0.5 hover:border-accent hover:bg-plum-50 hover:shadow-md hover:shadow-plum-600/10 active:scale-95"
                   >
                     {formatMinutes(start)}
                   </Link>
@@ -120,7 +94,7 @@ export default async function BookPage({ searchParams }: PageProps<"/book">) {
               ))}
             </ul>
           ) : (
-            <p className="card mt-4 p-6 text-center text-muted">
+            <p key={date} className="card mt-4 animate-rise p-6 text-center text-muted">
               No times left on this day. Please try another date.
             </p>
           )}
@@ -137,11 +111,11 @@ async function ChooseService() {
       <Steps current={1} />
       <h1 className="mt-8 font-display text-3xl font-semibold">Choose a service</h1>
       <ul className="mt-6 grid gap-3">
-        {services.map((s) => (
-          <li key={s.id}>
+        {services.map((s, i) => (
+          <li key={s.id} className="animate-rise" style={{ animationDelay: `${i * 0.05}s` }}>
             <Link
               href={`/book?service=${s.id}`}
-              className="card flex items-center justify-between gap-4 p-5 transition hover:border-plum-600"
+              className="card group flex items-center justify-between gap-4 p-5 transition hover:-translate-y-0.5 hover:border-accent hover:shadow-lg hover:shadow-plum-600/5"
             >
               <div>
                 <p className="font-semibold">{s.name}</p>

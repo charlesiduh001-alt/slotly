@@ -8,6 +8,7 @@ import {
   isValidDateString,
   nowInBusinessTz,
   overlaps,
+  toUtc,
 } from "./time.ts";
 
 describe("generateSlots", () => {
@@ -85,6 +86,11 @@ describe("date helpers", () => {
     assert.equal(formatMinutes(9 * 60 + 5), "9:05 AM");
     assert.equal(formatMinutes(12 * 60 + 30), "12:30 PM");
     assert.equal(formatMinutes(18 * 60), "6:00 PM");
+  });
+
+  it("converts a Lagos wall-clock time to UTC", () => {
+    assert.equal(toUtc("2026-09-24", 10 * 60).toISOString(), "2026-09-24T09:00:00.000Z");
+    assert.equal(toUtc("2026-12-31", 30).toISOString(), "2026-12-30T23:30:00.000Z");
   });
 
   it("reads the current time in the business timezone (Lagos is UTC+1)", () => {

@@ -78,6 +78,7 @@ flowchart LR
 | `/book/details` | Dynamic | Step 3: customer details form |
 | `/booking` | Static | Look up a booking by reference |
 | `/booking/[reference]` | Dynamic | Booking status, confirmation and self-service cancel |
+| `/booking/[reference]/calendar` | Route handler | Downloadable `.ics` calendar file for a confirmed booking |
 | `/admin/login` | Dynamic | Staff login |
 | `/admin` | Dynamic, protected | Daily schedule and stats |
 | `/admin/services` | Dynamic, protected | Add, hide and show services |
@@ -277,7 +278,7 @@ Lagos has no daylight saving time. A business in a DST timezone would need extra
 
 | Layer | Tooling | What it covers |
 | --- | --- | --- |
-| Unit | Node's built-in test runner | Slot generation, overlap rules, date arithmetic, timezone conversion, formatting (14 tests) |
+| Unit | Node's built-in test runner | Slot generation, overlap rules, date arithmetic, timezone conversion (including local-to-UTC for calendar files), formatting (15 tests) |
 | Types | TypeScript strict mode + Next.js generated route types | Page props and route params checked at compile time |
 | Lint | ESLint (Next.js config) | Common React and Next.js mistakes |
 | CI | GitHub Actions | Every push to `main`: install → lint → test → create DB → seed → production build |
@@ -378,6 +379,38 @@ Reusable styles are defined as Tailwind `@utility` classes, so the look stays co
 | `eyebrow` | Small uppercase section labels |
 
 **Shape language:** fully rounded (pill) buttons and softly rounded cards (`rounded-2xl`) keep the interface friendly.
+
+### Themes (light and dark)
+
+Components never use raw colours. They use semantic tokens (`cream`, `surface`, `ink`, `accent`, …) defined in `globals.css` as CSS variables, with one set of values per theme under `:root` and `[data-theme="dark"]`. Switching theme only changes the variables, so every component follows automatically.
+
+- **No flash on load.** A tiny inline script in `<head>` runs before the first paint and sets `data-theme` from the saved choice, or else the OS preference. The server renders a default, and `suppressHydrationWarning` lets the script's change stand.
+- **Separate roles for "primary" and "accent".** In dark mode no single plum works both as a button background with white text *and* as text on a dark background, so buttons use `plum-600` (primary) and text or links use `accent`. All text pairs pass WCAG AA in both themes.
+
+| Token | Light | Dark |
+| --- | --- | --- |
+| `cream` (page) | `#fbf7f2` | `#151012` |
+| `surface` (cards) | `#ffffff` | `#1e171b` |
+| `ink` (text) | `#1f1a17` | `#f5ede6` |
+| `muted` | `#6b5f57` | `#b3a59d` |
+| `plum-600` (primary) | `#6b2d5e` | `#a0508e` |
+| `accent` (text/links) | `#6b2d5e` | `#e0a9d2` |
+
+### Motion
+
+Motion should feel **fast, purposeful and optional**:
+
+| Where | Technique | Why |
+| --- | --- | --- |
+| Hero headline and entrance | CSS keyframes with staggered `animation-delay` | Runs from the first paint, before JavaScript loads, so the hero is never blank on slow mobile connections |
+| Section reveals on scroll | Motion + `useInView` | Content is visible in the server HTML. Only sections still off-screen after hydration are hidden and then revealed, so nothing waits on JavaScript to appear |
+| Service cards | Motion values + springs | Tilt toward the pointer with a spotlight following it (mouse only, so touch devices aren't affected) |
+| Booking demo, testimonials | `AnimatePresence` | Auto-play pauses on hover and focus, and when off-screen |
+| Date picker | Shared `layoutId` + optimistic state | The highlight slides to the tapped date immediately while the server renders that day's times |
+| Time slots, page transitions | CSS `animate-rise` / `template.tsx` | Pure CSS, so no JavaScript cost |
+| Confirmation | `canvas-confetti` | One celebratory burst, skipped for reduced motion |
+
+**Reduced motion:** `MotionConfig reducedMotion="user"` covers every Motion animation, and a `prefers-reduced-motion` media query neutralises all CSS animations and transitions. Auto-advancing carousels stop.
 
 ### Interaction and accessibility
 

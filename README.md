@@ -22,6 +22,12 @@ The demo is set up for **Glow Studio**, a fictional salon in Lagos.
 | --- | --- |
 | ![Booking confirmation with reference number](docs/screenshots/confirmation.png) | ![Admin schedule with daily stats and bookings table](docs/screenshots/admin-dashboard.png) |
 
+**Dark mode:** follows the system setting, with a toggle that remembers your choice
+
+| Home | Services |
+| --- | --- |
+| ![Home page in dark mode](docs/screenshots/home-dark.png) | ![Service cards in dark mode](docs/screenshots/services-dark.png) |
+
 **On mobile**
 
 <p>
@@ -43,8 +49,16 @@ The demo is set up for **Glow Studio**, a fictional salon in Lagos.
 - Browse services with prices and durations
 - 3-step booking flow: service → date & time → details
 - Live availability that accounts for service length, opening hours, existing bookings and same-day notice
-- Booking reference page; self-service cancellation (requires the booking email)
+- Booking reference "ticket" with confetti, **Add to Google Calendar** and a downloadable `.ics` file
+- Self-service cancellation (requires the booking email)
 - Mobile-first, keyboard-accessible, works without JavaScript for core flows
+
+**Interaction & polish**
+- Light and dark themes with no flash on load, and colour contrast checked to WCAG AA in both
+- Animated landing page: word-by-word headline, scroll reveals, tilt-and-spotlight service cards, counting stats, an auto-playing booking demo and a testimonials carousel
+- Date picker whose highlight slides instantly (optimistic UI) while times load; slots cascade in
+- Micro-interactions: pressable buttons, shake on invalid input, page fade transitions
+- Every animation respects the OS "reduce motion" setting
 
 **Staff (`/admin`)**
 - Day-by-day schedule with expected revenue and hours booked
@@ -57,7 +71,8 @@ The demo is set up for **Glow Studio**, a fictional salon in Lagos.
 | --- | --- |
 | Framework | Next.js 16 (App Router, Server Components, Server Actions) |
 | Language | TypeScript |
-| Styling | Tailwind CSS v4 |
+| Styling | Tailwind CSS v4 (design tokens as CSS variables for theming) |
+| Animation | Motion (React) + CSS keyframes |
 | Database | SQLite locally / Turso in production, via Drizzle ORM |
 | Validation | Zod |
 | Tests | Node's built-in test runner |

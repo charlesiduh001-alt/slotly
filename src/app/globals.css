@@ -1,50 +1,155 @@
 @import "tailwindcss";
 
-@theme {
-  --color-cream: #fbf7f2;
-  --color-sand: #f1e8dd;
-  --color-line: #e6dace;
-  --color-ink: #1f1a17;
-  --color-muted: #6b5f57;
-  --color-plum-50: #f7eff5;
-  --color-plum-100: #eedbe8;
-  --color-plum-600: #6b2d5e;
-  --color-plum-700: #56234b;
-  --color-plum-900: #2e1128;
-  --color-gold: #c8963e;
-  --color-success: #2f7a55;
-  --color-danger: #b3362f;
+/* Theme is set on <html data-theme="light|dark"> by an inline script in layout.tsx. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* Colour values per theme. Components only use the semantic tokens below. */
+:root {
+  --c-bg: #fbf7f2;
+  --c-surface: #ffffff;
+  --c-sand: #f1e8dd;
+  --c-line: #e6dace;
+  --c-ink: #1f1a17;
+  --c-muted: #6b5f57;
+  --c-tint: #f7eff5;
+  --c-tint-strong: #eedbe8;
+  --c-primary: #6b2d5e;
+  --c-primary-hover: #56234b;
+  --c-accent: #6b2d5e;
+  --c-deep: #2e1128;
+  --c-gold: #9a6b1f;
+  --c-success: #2f7a55;
+  --c-danger: #b3362f;
+  --c-glow: rgb(107 45 94 / 0.14);
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --c-bg: #151012;
+  --c-surface: #1e171b;
+  --c-sand: #231b1f;
+  --c-line: #3a2e34;
+  --c-ink: #f5ede6;
+  --c-muted: #b3a59d;
+  --c-tint: #2a1b26;
+  --c-tint-strong: #3d2437;
+  --c-primary: #a0508e;
+  --c-primary-hover: #b05c9c;
+  --c-accent: #e0a9d2;
+  --c-deep: #2a0f25;
+  --c-gold: #c8963e;
+  --c-success: #5cc493;
+  --c-danger: #f08078;
+  --c-glow: rgb(224 169 210 / 0.12);
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-cream: var(--c-bg);
+  --color-surface: var(--c-surface);
+  --color-sand: var(--c-sand);
+  --color-line: var(--c-line);
+  --color-ink: var(--c-ink);
+  --color-muted: var(--c-muted);
+  --color-plum-50: var(--c-tint);
+  --color-plum-100: var(--c-tint-strong);
+  --color-plum-600: var(--c-primary);
+  --color-plum-700: var(--c-primary-hover);
+  --color-plum-900: var(--c-deep);
+  --color-accent: var(--c-accent);
+  --color-gold: var(--c-gold);
+  --color-success: var(--c-success);
+  --color-danger: var(--c-danger);
 
   --font-sans: var(--font-inter);
   --font-display: var(--font-fraunces);
+
+  --animate-page-in: page-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-rise: rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-word: word 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-shake: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-drift: drift 18s ease-in-out infinite alternate;
+}
+
+@keyframes page-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes rise {
+  from { opacity: 0; transform: translateY(10px) scale(0.97); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes word {
+  from { opacity: 0; transform: translateY(110%); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes shake {
+  10%, 90% { transform: translateX(-1px); }
+  20%, 80% { transform: translateX(2px); }
+  30%, 50%, 70% { transform: translateX(-4px); }
+  40%, 60% { transform: translateX(4px); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes drift {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(-60px, 40px) scale(1.15); }
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--color-cream);
-  color: var(--color-ink);
+  background: var(--c-bg);
+  color: var(--c-ink);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+::selection {
+  background: var(--c-tint-strong);
+  color: var(--c-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
 
 @utility btn {
-  @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-plum-600 disabled:cursor-not-allowed disabled:opacity-60;
+  @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-[color,background-color,border-color,box-shadow,transform] duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-60 disabled:active:scale-100;
 }
 @utility btn-primary {
-  @apply btn bg-plum-600 text-white hover:bg-plum-700;
+  @apply btn bg-plum-600 text-white shadow-lg shadow-plum-600/20 hover:bg-plum-700 hover:shadow-xl hover:shadow-plum-600/30;
 }
 @utility btn-secondary {
-  @apply btn border border-line bg-white text-ink hover:border-plum-600 hover:text-plum-700;
+  @apply btn border border-line bg-surface text-ink hover:border-accent hover:text-accent;
 }
 @utility btn-danger {
-  @apply btn border border-danger/30 bg-white text-danger hover:bg-danger hover:text-white;
+  @apply btn border border-danger/30 bg-surface text-danger hover:border-danger hover:bg-danger/10;
 }
 @utility card {
-  @apply rounded-2xl border border-line bg-white;
+  @apply rounded-2xl border border-line bg-surface;
+}
+@utility glass {
+  @apply border border-line/70 bg-surface/70 backdrop-blur-xl;
 }
 @utility input {
-  @apply w-full rounded-xl border border-line bg-white px-4 py-2.5 text-sm text-ink placeholder:text-muted/70 focus:border-plum-600 focus:ring-2 focus:ring-plum-100 focus:outline-none aria-invalid:border-danger;
+  @apply w-full rounded-xl border border-line bg-surface px-4 py-2.5 text-sm text-ink transition-[border-color,box-shadow] placeholder:text-muted/70 focus:border-accent focus:ring-4 focus:ring-plum-100 focus:outline-none aria-invalid:animate-shake aria-invalid:border-danger;
 }
 @utility label {
   @apply mb-1.5 block text-sm font-medium text-ink;
 }
 @utility eyebrow {
-  @apply text-xs font-semibold tracking-[0.18em] text-plum-600 uppercase;
+  @apply text-xs font-semibold tracking-[0.18em] text-accent uppercase;
+}
+@utility text-gradient {
+  @apply bg-gradient-to-r from-accent via-accent to-gold bg-clip-text text-transparent;
 }
