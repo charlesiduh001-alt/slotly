@@ -4,7 +4,9 @@ Online appointment booking for salons, barbers and clinics. Customers pick a ser
 
 The demo is set up for **Glow Studio**, a fictional salon in Lagos.
 
-> **Live demo:** _coming soon_ · **Screenshots:** _coming soon_
+> **Live demo: [slotly-orpin.vercel.app](https://slotly-orpin.vercel.app)** — try booking an appointment.
+
+[![CI](https://github.com/charlesiduh001-alt/slotly/actions/workflows/ci.yml/badge.svg)](https://github.com/charlesiduh001-alt/slotly/actions/workflows/ci.yml)
 
 ## Features
 
@@ -97,4 +99,4 @@ scripts/seed.ts   demo data
 - [ ] Online deposits with Paystack
 - [ ] Admin editing of opening hours and holidays
 - [ ] End-to-end tests with Playwright
-- [ ] Deploy to Vercel + Turso
+- [x] Deploy to Vercel + Turso
