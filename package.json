@@ -11,7 +11,9 @@
     "db:seed": "tsx --env-file-if-exists=.env.local scripts/seed.ts",
     "db:studio": "drizzle-kit studio",
     "test": "node --test --experimental-strip-types src/**/*.test.ts",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "db:push:prod": "node --env-file=.env.production.local node_modules/drizzle-kit/bin.cjs push",
+    "db:seed:prod": "tsx --env-file=.env.production.local scripts/seed.ts"
   },
   "dependencies": {
     "@libsql/client": "^0.18.0",

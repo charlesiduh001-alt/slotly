@@ -65,6 +65,20 @@ Open http://localhost:3000. The staff dashboard is at `/admin`.
 | `npm run db:seed` | Reset and seed demo data |
 | `npm run db:studio` | Browse the database in Drizzle Studio |
 
+## Deployment (Vercel + Turso)
+
+1. Create a Turso database and an auth token.
+2. Put the credentials in `.env.production.local` (git-ignored):
+   ```
+   DATABASE_URL=libsql://<your-db>.turso.io
+   DATABASE_AUTH_TOKEN=<token>
+   ```
+3. Create the tables and demo data: `npm run db:push:prod && npm run db:seed:prod`.
+   The seed **wipes existing bookings**, so only run it on a fresh database.
+4. Import the GitHub repo into Vercel and add the environment variables `DATABASE_URL`, `DATABASE_AUTH_TOKEN`, `ADMIN_PASSWORD` and `SESSION_SECRET`.
+
+Every push to `main` runs lint, tests and a production build in GitHub Actions, and Vercel redeploys automatically.
+
 ## Project structure
 
 ```
