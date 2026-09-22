@@ -68,6 +68,17 @@ export async function getAvailableSlots(
   });
 }
 
+/** The first bookable date with at least one free slot, and its slots. */
+export async function findNextAvailable(
+  service: { durationMin: number },
+): Promise<{ date: string; slots: number[] } | null> {
+  for (const date of getBookableDates()) {
+    const slots = await getAvailableSlots(service, date);
+    if (slots.length) return { date, slots };
+  }
+  return null;
+}
+
 export async function getBookingByReference(reference: string) {
   const [row] = await db
     .select({ booking: bookings, service: services })

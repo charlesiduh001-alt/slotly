@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { Suspense } from "react";
+import { NextAvailableCard } from "@/components/next-available-card";
 import { business, DAY_NAMES } from "@/lib/business";
 import { formatDuration, formatPrice } from "@/lib/format";
 import { getActiveServices, getBusinessHours } from "@/lib/queries";
@@ -34,30 +36,9 @@ export default async function Home() {
             </div>
           </div>
 
-          <div className="card relative p-6 shadow-xl shadow-plum-900/5" aria-hidden>
-            <p className="text-sm font-medium text-muted">Next available</p>
-            <p className="mt-1 font-display text-2xl font-semibold">Silk Press</p>
-            <div className="mt-5 grid grid-cols-3 gap-2">
-              {["9:00 AM", "10:30 AM", "12:00 PM", "1:30 PM", "3:00 PM", "4:30 PM"].map((t, i) => (
-                <span
-                  key={t}
-                  className={`rounded-xl border px-3 py-2 text-center text-sm font-medium ${
-                    i === 2
-                      ? "border-plum-600 bg-plum-600 text-white"
-                      : "border-line text-ink"
-                  }`}
-                >
-                  {t}
-                </span>
-              ))}
-            </div>
-            <div className="mt-5 flex items-center gap-3 rounded-xl bg-plum-50 p-3 text-sm">
-              <span className="grid size-8 place-items-center rounded-full bg-success text-white">✓</span>
-              <span>
-                <strong>Booking confirmed</strong> — ref SL-7K2M9Q
-              </span>
-            </div>
-          </div>
+          <Suspense fallback={<CardSkeleton />}>
+            <NextAvailableCard />
+          </Suspense>
         </div>
       </section>
 
@@ -138,5 +119,20 @@ export default async function Home() {
         </div>
       </section>
     </>
+  );
+}
+
+function CardSkeleton() {
+  return (
+    <div className="card p-6 shadow-xl shadow-plum-900/5" aria-busy="true" aria-label="Loading availability">
+      <div className="h-4 w-28 animate-pulse rounded bg-sand" />
+      <div className="mt-3 h-7 w-40 animate-pulse rounded bg-sand" />
+      <div className="mt-6 grid grid-cols-3 gap-2">
+        {Array.from({ length: 6 }, (_, i) => (
+          <div key={i} className="h-10 animate-pulse rounded-xl bg-sand" />
+        ))}
+      </div>
+      <div className="mt-5 h-11 animate-pulse rounded-xl bg-plum-50" />
+    </div>
   );
 }

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Steps } from "@/components/steps";
 import { formatDuration, formatPrice } from "@/lib/format";
 import {
+  findNextAvailable,
   getActiveServices,
   getAvailableSlots,
   getBookableDates,
@@ -35,14 +36,9 @@ export default async function BookPage({ searchParams }: PageProps<"/book">) {
     slots = await getAvailableSlots(service, date);
   } else {
     // No date chosen yet: jump to the first day that still has openings.
-    for (const d of openDates) {
-      slots = await getAvailableSlots(service, d);
-      if (slots.length) {
-        date = d;
-        break;
-      }
-    }
-    date ??= openDates[0];
+    const next = await findNextAvailable(service);
+    date = next?.date ?? openDates[0];
+    slots = next?.slots ?? [];
   }
 
   return (
