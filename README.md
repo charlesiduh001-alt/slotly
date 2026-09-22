@@ -8,6 +8,35 @@ The demo is set up for **Glow Studio**, a fictional salon in Lagos.
 
 [![CI](https://github.com/charlesiduh001-alt/slotly/actions/workflows/ci.yml/badge.svg)](https://github.com/charlesiduh001-alt/slotly/actions/workflows/ci.yml)
 
+![Slotly home page with live "next available" times](docs/screenshots/home.png)
+
+## Screenshots
+
+**Booking flow:** pick a time, enter details, get a reference
+
+| Choose a time | Your details |
+| --- | --- |
+| ![Date and time picker showing available slots](docs/screenshots/choose-time.png) | ![Details form with booking summary](docs/screenshots/details.png) |
+
+| Confirmation | Staff dashboard |
+| --- | --- |
+| ![Booking confirmation with reference number](docs/screenshots/confirmation.png) | ![Admin schedule with daily stats and bookings table](docs/screenshots/admin-dashboard.png) |
+
+**On mobile**
+
+<p>
+  <img src="docs/screenshots/mobile-home.png" alt="Home page on a phone" width="260">
+  &nbsp;&nbsp;
+  <img src="docs/screenshots/mobile-booking.png" alt="Booking time picker on a phone" width="260">
+</p>
+
+<details>
+<summary>Admin: managing services</summary>
+
+![Admin services list with add-service form](docs/screenshots/admin-services.png)
+
+</details>
+
 ## Features
 
 **Customers**
@@ -66,6 +95,7 @@ Open http://localhost:3000. The staff dashboard is at `/admin`.
 | `npm run db:push` | Apply the schema to the database |
 | `npm run db:seed` | Reset and seed demo data |
 | `npm run db:studio` | Browse the database in Drizzle Studio |
+| `npm run screenshots` | Regenerate README screenshots (needs `db:seed -- --with-bookings` and a running dev server) |
 
 ## Deployment (Vercel + Turso)
 

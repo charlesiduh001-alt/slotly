@@ -1,7 +1,9 @@
 // Seeds demo services and opening hours. Run with: npm run db:seed
+// Add --with-bookings to also create sample bookings for the next open day.
 import { createClient } from "@libsql/client";
 import { drizzle } from "drizzle-orm/libsql";
 import { bookings, businessHours, services } from "../src/db/schema";
+import { addDays, dayOfWeek, nowInBusinessTz } from "../src/lib/time";
 
 const db = drizzle(
   createClient({
@@ -31,9 +33,47 @@ async function main() {
   await db.delete(bookings);
   await db.delete(services);
   await db.delete(businessHours);
-  await db.insert(services).values(demoServices);
+  const inserted = await db.insert(services).values(demoServices).returning();
   await db.insert(businessHours).values(hours);
-  console.log(`Seeded ${demoServices.length} services and weekly opening hours.`);
+  console.log(`Seeded ${inserted.length} services and weekly opening hours.`);
+
+  if (process.argv.includes("--with-bookings")) {
+    const count = await seedBookings(inserted);
+    console.log(`Added ${count} sample bookings.`);
+  }
+}
+
+async function seedBookings(svc: { id: number; durationMin: number }[]) {
+  let date = addDays(nowInBusinessTz().date, 1);
+  while (hours[dayOfWeek(date)].closed) date = addDays(date, 1);
+
+  // [service index, start hour, start minute, name, status]
+  const sample = [
+    [3, 9, 0, "Tunde Bakare", "confirmed"],
+    [0, 10, 0, "Amaka Obi", "confirmed"],
+    [4, 11, 30, "Zainab Yusuf", "cancelled"],
+    [1, 12, 0, "Chioma Eze", "confirmed"],
+    [5, 16, 30, "David Okon", "confirmed"],
+  ] as const;
+
+  await db.insert(bookings).values(
+    sample.map(([i, h, m, name, status], n) => {
+      const startMin = h * 60 + m;
+      return {
+        reference: `SL-DEMO${n + 1}${"ABCDE"[n]}`,
+        serviceId: svc[i].id,
+        customerName: name,
+        customerEmail: `${name.split(" ")[0].toLowerCase()}@example.com`,
+        customerPhone: `+234 80${n} 555 01${n}${n}`,
+        notes: n === 1 ? "First time, shoulder-length natural hair" : null,
+        date,
+        startMin,
+        endMin: startMin + svc[i].durationMin,
+        status,
+      };
+    }),
+  );
+  return sample.length;
 }
 
 main().catch((err) => {

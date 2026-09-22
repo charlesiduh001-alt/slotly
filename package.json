@@ -13,7 +13,8 @@
     "test": "node --test --experimental-strip-types src/**/*.test.ts",
     "typecheck": "tsc --noEmit",
     "db:push:prod": "node --env-file=.env.production.local node_modules/drizzle-kit/bin.cjs push",
-    "db:seed:prod": "tsx --env-file=.env.production.local scripts/seed.ts"
+    "db:seed:prod": "tsx --env-file=.env.production.local scripts/seed.ts",
+    "screenshots": "tsx --env-file-if-exists=.env.local scripts/screenshots.ts"
   },
   "dependencies": {
     "@libsql/client": "^0.18.0",
@@ -32,6 +33,7 @@
     "drizzle-kit": "^0.31.11",
     "eslint": "^9",
     "eslint-config-next": "16.3.6",
+    "playwright-core": "^1.63.0",
     "tailwindcss": "^4",
     "tsx": "^4.23.15",
     "typescript": "^5"

@@ -6,11 +6,11 @@ import { addDays, formatDate, formatMinutes, nowInBusinessTz } from "@/lib/time"
 
 const MAX_SLOTS = 6;
 
-function relativeDay(date: string): string {
+function relativeDay(date: string): string | null {
   const today = nowInBusinessTz().date;
   if (date === today) return "Today";
   if (date === addDays(today, 1)) return "Tomorrow";
-  return formatDate(date, "short");
+  return null;
 }
 
 /** Live preview of the soonest open times for the first listed service. */
@@ -34,8 +34,14 @@ export async function NextAvailableCard() {
           </p>
 
           <p className="mt-5 text-sm font-semibold">
-            {relativeDay(next.date)}
-            <span className="font-normal text-muted"> · {formatDate(next.date)}</span>
+            {relativeDay(next.date) ? (
+              <>
+                {relativeDay(next.date)}
+                <span className="font-normal text-muted"> · {formatDate(next.date)}</span>
+              </>
+            ) : (
+              formatDate(next.date)
+            )}
           </p>
           <ul className="mt-2 grid grid-cols-3 gap-2">
             {next.slots.slice(0, MAX_SLOTS).map((start, i) => (
