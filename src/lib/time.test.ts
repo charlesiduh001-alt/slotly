@@ -36,6 +36,20 @@ describe("generateSlots", () => {
     assert.deepEqual(generateSlots({ ...base, earliestMin: 620 }), [630, 660]);
   });
 
+  it("matches the worked example in DESIGN.md", () => {
+    const slots = generateSlots({
+      openMin: 9 * 60,
+      closeMin: 18 * 60,
+      durationMin: 90,
+      booked: [
+        { startMin: 540, endMin: 585 },
+        { startMin: 600, endMin: 690 },
+        { startMin: 720, endMin: 960 },
+      ],
+    });
+    assert.deepEqual(slots.map(formatMinutes), ["4:00 PM", "4:30 PM"]);
+  });
+
   it("returns nothing when the service is longer than opening hours", () => {
     assert.deepEqual(generateSlots({ ...base, durationMin: 240 }), []);
   });

@@ -64,6 +64,8 @@ The demo is set up for **Glow Studio**, a fictional salon in Lagos.
 
 ## Engineering decisions
 
+> The full reasoning, with architecture diagrams, the availability algorithm, security model and design system, is in **[DESIGN.md](DESIGN.md)**.
+
 - **No double-bookings.** Availability is re-checked inside an `IMMEDIATE` SQLite transaction before the insert, so two customers submitting the same slot at once can't both succeed.
 - **Timezone-safe times.** Bookings are stored as a local business date plus minutes after midnight, and "now" is always calculated in the business timezone (`Africa/Lagos`). Results don't depend on where the server runs.
 - **Money as integers.** Prices are stored in kobo to avoid floating-point rounding errors.
