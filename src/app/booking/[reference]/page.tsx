@@ -3,11 +3,12 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { cancelBookingByCustomer } from "@/app/actions";
 import { Confetti } from "@/components/confetti";
+import { CopyButton } from "@/components/copy-button";
 import { business } from "@/lib/business";
 import { googleCalendarUrl } from "@/lib/calendar";
 import { formatDuration, formatPrice } from "@/lib/format";
 import { getBookingByReference } from "@/lib/queries";
-import { formatDate, formatMinutes, nowInBusinessTz } from "@/lib/time";
+import { formatMinutes, nowInBusinessTz } from "@/lib/time";
 
 export async function generateMetadata({ params }: PageProps<"/booking/[reference]">): Promise<Metadata> {
   const { reference } = await params;
@@ -52,7 +53,7 @@ export default async function BookingPage({ params, searchParams }: PageProps<"/
     ? "The time slot has been released. You're welcome to book another time."
     : isPast
       ? "Thanks for visiting. We hope to see you again soon."
-      : `We've saved your appointment for ${formatDate(booking.date)}.`;
+      : "Keep your reference handy. You can use it to find or cancel this booking any time.";
 
   return (
     <div className="container-page py-10 md:py-16">
@@ -85,28 +86,57 @@ export default async function BookingPage({ params, searchParams }: PageProps<"/
             <p className="mt-2 body-md text-muted">{sub}</p>
           </div>
 
-          <dl className="mt-8 divide-y divide-hairline border-y border-hairline body-sm">
-            <Row label="What" value={`${service.name} · ${formatDuration(service.durationMin)}`} />
-            <Row
-              label="When"
-              value={`${formatDate(booking.date)}, ${formatMinutes(booking.startMin)} – ${formatMinutes(booking.endMin)}`}
-              strike={cancelled}
-            />
-            <Row label="Who" value={booking.customerName} />
-            <Row label="Where" value={`${business.name}, ${business.address}`} />
-            <Row label="Price" value={`${service.priceKobo ? formatPrice(service.priceKobo) : "Free"} · pay at the studio`} />
-            <div className="grid grid-cols-[88px_1fr] gap-4 py-3.5">
-              <dt className="text-muted">Reference</dt>
-              <dd className="font-mono text-[14px] font-semibold tracking-wider text-ink">{booking.reference}</dd>
+          {/* Appointment summary: date tile + service, then a grid of detail tiles */}
+          <div className="mt-8 overflow-hidden rounded-lg border border-hairline">
+            <div className="flex items-center gap-4 p-5">
+              <div
+                aria-hidden
+                className={`flex w-14 shrink-0 flex-col overflow-hidden rounded-md border border-hairline text-center ${cancelled ? "opacity-50" : ""}`}
+              >
+                <span className="bg-primary py-0.5 text-[11px] font-semibold tracking-wider text-on-primary uppercase">
+                  {dateParts(booking.date).month}
+                </span>
+                <span className="py-1 font-display text-[24px] leading-tight text-ink">{dateParts(booking.date).day}</span>
+              </div>
+              <div className="min-w-0">
+                <p className={`title-md ${cancelled ? "text-muted line-through" : ""}`}>{service.name}</p>
+                <p className="mt-0.5 body-sm text-body">{dateParts(booking.date).weekday}</p>
+                <p className="body-sm text-body">
+                  <span className="whitespace-nowrap">
+                    {formatMinutes(booking.startMin)} – {formatMinutes(booking.endMin)}
+                  </span>
+                  <span className="whitespace-nowrap text-muted"> · {formatDuration(service.durationMin)}</span>
+                </p>
+              </div>
             </div>
-          </dl>
+
+            <dl className="grid gap-px border-t border-hairline bg-hairline sm:grid-cols-2">
+              <Detail icon="pin" label="Location">
+                {business.name}
+                <span className="block font-normal text-body">{business.address}</span>
+              </Detail>
+              <Detail icon="price" label="Payment">
+                {service.priceKobo ? formatPrice(service.priceKobo) : "Free"}
+                <span className="block font-normal text-body">Pay at the studio</span>
+              </Detail>
+              <Detail icon="user" label="Booked for">
+                {booking.customerName}
+              </Detail>
+              <Detail icon="hash" label="Reference">
+                <span className="flex flex-wrap items-center gap-2">
+                  <span className="font-mono tracking-wider">{booking.reference}</span>
+                  <CopyButton text={booking.reference} />
+                </span>
+              </Detail>
+            </dl>
+          </div>
 
           {upcoming && (
             <div className="mt-6 flex flex-col gap-2 sm:flex-row">
-              <a href={googleCalendarUrl(event)} target="_blank" rel="noopener noreferrer" className="btn-secondary flex-1">
+              <a href={googleCalendarUrl(event)} target="_blank" rel="noopener noreferrer" className="btn-secondary w-full sm:flex-1">
                 <CalendarIcon /> Google Calendar
               </a>
-              <a href={`/booking/${booking.reference}/calendar`} className="btn-secondary flex-1">
+              <a href={`/booking/${booking.reference}/calendar`} className="btn-secondary w-full sm:flex-1">
                 <DownloadIcon /> Download .ics
               </a>
             </div>
@@ -147,11 +177,49 @@ export default async function BookingPage({ params, searchParams }: PageProps<"/
   );
 }
 
-function Row({ label, value, strike = false }: { label: string; value: string; strike?: boolean }) {
+function dateParts(date: string) {
+  const d = new Date(`${date}T00:00:00Z`);
+  const fmt = (o: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat("en-GB", { ...o, timeZone: "UTC" }).format(d);
+  return {
+    month: fmt({ month: "short" }).slice(0, 3),
+    day: fmt({ day: "numeric" }),
+    weekday: fmt({ weekday: "long", day: "numeric", month: "long", year: "numeric" }),
+  };
+}
+
+const DETAIL_ICONS = {
+  pin: (
+    <>
+      <path d="M12 21s-7-5.5-7-11a7 7 0 0 1 14 0c0 5.5-7 11-7 11z" />
+      <circle cx="12" cy="10" r="2.5" />
+    </>
+  ),
+  price: (
+    <>
+      <rect x="2" y="6" width="20" height="12" rx="2" />
+      <circle cx="12" cy="12" r="2.5" />
+    </>
+  ),
+  user: (
+    <>
+      <circle cx="12" cy="8" r="4" />
+      <path d="M4 21a8 8 0 0 1 16 0" />
+    </>
+  ),
+  hash: <path d="M5 9h14M5 15h14M10 3 8 21M16 3l-2 18" />,
+};
+
+/** One tile in the booking summary grid: icon, small label, value. */
+function Detail({ icon, label, children }: { icon: keyof typeof DETAIL_ICONS; label: string; children: React.ReactNode }) {
   return (
-    <div className="grid grid-cols-[88px_1fr] gap-4 py-3.5">
-      <dt className="text-muted">{label}</dt>
-      <dd className={`font-medium text-ink ${strike ? "line-through" : ""}`}>{value}</dd>
+    <div className="flex gap-3 bg-surface-soft p-5">
+      <svg viewBox="0 0 24 24" className="mt-0.5 size-4 shrink-0 text-muted" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+        {DETAIL_ICONS[icon]}
+      </svg>
+      <div className="min-w-0">
+        <dt className="caption text-muted">{label}</dt>
+        <dd className="mt-1 body-sm font-medium text-ink">{children}</dd>
+      </div>
     </div>
   );
 }
