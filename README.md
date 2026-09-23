@@ -54,7 +54,7 @@ The demo is set up for **Glow Studio**, a fictional salon in Lagos.
 - Mobile-first, keyboard-accessible, works without JavaScript for core flows
 
 **Design & interaction**
-- Visual system follows a Cal.com-style design spec: monochrome canvas, near-black CTAs, Cal Sans display type with Inter body, 8/12/16px radius scale, light-grey cards and a dark footer
+- Visual system follows a Cal.com-style design spec ([docs/design-spec.md](docs/design-spec.md)): monochrome canvas, near-black CTAs, Cal Sans display type with Inter body, 8/12/16px radius scale, light-grey cards and a dark footer
 - Booking widget with a real **month calendar** (available days on grey tiles, selected day solid, today marked) beside the day's time slots; selection updates instantly (optimistic UI)
 - Live booking widget in the hero, pill-in-pill tab switcher for "How it works", testimonial cards with pastel avatars and star ratings
 - Light and dark themes with no flash on load; text colours checked to WCAG AA
@@ -140,7 +140,8 @@ src/
   components/     booking widget, month calendar, forms, motion helpers
   db/             Drizzle schema and client
   lib/            time/slot logic, queries, auth, formatting
-scripts/seed.ts   demo data
+scripts/          seed data, screenshots, image compression, site audit
+docs/             design spec (visual source of truth) and screenshots
 ```
 
 ## Roadmap

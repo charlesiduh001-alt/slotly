@@ -127,7 +127,7 @@ export default async function Home() {
                       <ServiceIcon index={i} />
                     </span>
                     <span className="mt-5 title-md">{s.name}</span>
-                    <span className="mt-2 flex-1 body-sm text-muted">{s.description}</span>
+                    <span className="mt-2 flex-1 body-sm text-body">{s.description}</span>
                     <span className="mt-6 flex items-center justify-between gap-3">
                       <span className="title-sm">{s.priceKobo ? formatPrice(s.priceKobo) : "Free"}</span>
                       <span className="badge bg-canvas">{formatDuration(s.durationMin)}</span>
@@ -174,7 +174,7 @@ export default async function Home() {
                       </span>
                       <span>
                         <span className="block title-sm">{t.name}</span>
-                        <span className="block caption text-muted">{t.detail}</span>
+                        <span className="block caption text-body">{t.detail}</span>
                       </span>
                     </figcaption>
                     <Stars className="mt-4" />
@@ -230,7 +230,7 @@ export default async function Home() {
           <Reveal>
             <div className="rounded-lg bg-surface-card px-6 py-12 text-center md:p-12">
               <h2 className="display-sm">Ready for a fresh look?</h2>
-              <p className="mx-auto mt-3 max-w-md body-md text-muted">Book online any time, day or night. It takes less than a minute.</p>
+              <p className="mx-auto mt-3 max-w-md body-md text-body">Book online any time, day or night. It takes less than a minute.</p>
               <Link href="/book" className="btn-primary mt-8">
                 Book an appointment
               </Link>

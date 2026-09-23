@@ -139,7 +139,7 @@ export default async function AdminBookingsPage({ searchParams }: PageProps<"/ad
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex flex-col-reverse rounded-lg bg-surface-card p-6">
-      <dt className="mt-1 caption text-muted">{label}</dt>
+      <dt className="mt-1 caption text-body">{label}</dt>
       <dd className="display-sm">{value}</dd>
     </div>
   );

@@ -187,7 +187,7 @@ Business rules live in `booking-rules.ts` as named constants rather than magic n
 
 **Complexity:** for a day with *n* candidate slots and *b* bookings, the check is O(n × b). With at most ~20 slots and a handful of bookings per day, that's trivially fast. An interval tree would be over-engineering.
 
-**"Next available"** (used by the home page card and as the default date on `/book`) walks forward day by day through the booking window and returns the first day with at least one slot.
+**Whole-window availability.** The month calendar needs every day at once, so `getAvailability()` loads the opening hours and all confirmed bookings in the 21-day window with **two queries**, then runs `generateSlots` per day in memory, instead of two queries per day. "Next available" (the hero widget and the default date on `/book`) is simply the first day in that result with a free slot. The booking action still re-checks the single chosen day inside its transaction (section 5).
 
 ---
 
@@ -268,9 +268,15 @@ Lagos has no daylight saving time. A business in a DST timezone would need extra
 ## 8. Rendering and data freshness
 
 - Pages that depend on the request (search parameters, cookies) are rendered per request automatically.
-- The home page calls `connection()` in the "next available" card, because its content depends on the current time and must never be served from a build-time snapshot.
-- That card is wrapped in `<Suspense>` with a skeleton, so the rest of the home page streams immediately while availability loads.
+- The hero booking widget calls `connection()`, because its content depends on the current time and must never be served from a build-time snapshot.
+- It is wrapped in `<Suspense>` with a calendar-shaped skeleton, so the rest of the home page streams immediately while availability loads.
 - After a mutation, actions call `revalidatePath()` for affected pages (for example `/admin` after a booking), so staff see changes straight away.
+
+### Feedback, errors and metadata
+
+- **Action feedback.** Server Actions that redirect add `?notice=<key>`. The page validates the key against a fixed list (`lib/notices.ts`), and a small client component shows the message, then removes the parameter with `history.replaceState` so a refresh doesn't repeat it. Unknown keys are ignored, so the URL can't inject arbitrary text.
+- **Errors.** `not-found.tsx` handles unknown pages and booking references. `error.tsx` catches unexpected failures with a "Try again" button (using this Next.js version's `retry()`), and `global-error.tsx` is a self-contained last resort if the root layout itself fails.
+- **Metadata.** Every page has its own title and description (booking pages include the service name and price). Private pages (admin, booking pages, the details step) are `noindex`. `icon.svg`, `apple-icon.tsx` and `opengraph-image.tsx` generate the favicon, iOS home-screen icon and social share card.
 
 ---
 
@@ -282,7 +288,8 @@ Lagos has no daylight saving time. A business in a DST timezone would need extra
 | Types | TypeScript strict mode + Next.js generated route types | Page props and route params checked at compile time |
 | Lint | ESLint (Next.js config) | Common React and Next.js mistakes |
 | CI | GitHub Actions | Every push to `main`: install → lint → test → create DB → seed → production build |
-| Manual / visual | Playwright screenshot script | Desktop and mobile rendering of every key page |
+| Manual / visual | Playwright screenshot script | Desktop, mobile and dark-mode rendering of every key page |
+| Site audit | `scripts/audit.ts` (Playwright) | Crawls every page at 375px and 1280px: broken links, horizontal overflow, missing titles and descriptions, heading structure, tap targets under 24px, inputs under 16px (iOS zoom), console errors |
 
 **Why Node's test runner instead of Jest or Vitest:** the logic under test is plain TypeScript with no DOM, so a zero-dependency runner is enough and keeps CI fast. End-to-end tests with Playwright are the next planned addition.
 
@@ -336,85 +343,83 @@ Roughly in priority order:
 
 ## 13. Visual design system
 
-The demo brand, **Glow Studio**, aims for *warm, calm and premium*: closer to a boutique salon than a generic SaaS dashboard.
+The visual source of truth is **[docs/design-spec.md](docs/design-spec.md)**, a design-system analysis of Cal.com's interface (tokens, typography, components and responsive rules). Slotly adopts it because a booking product should look like professional scheduling software: calm, monochrome and focused on the calendar, with brand character coming from typography and real product UI rather than colour.
 
-### Colour
+Every value below comes from that spec unless it's listed under deviations.
 
-Defined once as Tailwind v4 theme tokens in `src/app/globals.css`:
+### Tokens
 
-| Token | Hex | Used for |
-| --- | --- | --- |
-| `cream` | `#fbf7f2` | Page background (warmer and softer than pure white) |
-| `sand` | `#f1e8dd` | Subtle fills, table headers, skeletons |
-| `line` | `#e6dace` | Borders and dividers |
-| `ink` | `#1f1a17` | Primary text (warm near-black) |
-| `muted` | `#6b5f57` | Secondary text |
-| `plum-600` | `#6b2d5e` | Primary brand colour: buttons, selected states, links |
-| `plum-700` | `#56234b` | Hover state of primary |
-| `plum-50` / `100` | `#f7eff5` / `#eedbe8` | Tinted backgrounds, focus rings |
-| `plum-900` | `#2e1128` | Call-to-action banner |
-| `success` | `#2f7a55` | Confirmed status, success messages |
-| `danger` | `#b3362f` | Errors, cancelled status, destructive buttons |
+Tokens live once in `src/app/globals.css` as CSS variables, exposed to Tailwind through `@theme`. Components only use semantic names, never raw hex values.
 
-Text colours on their backgrounds meet WCAG AA contrast.
+| Token | Light | Dark | Used for |
+| --- | --- | --- | --- |
+| `canvas` | `#ffffff` | `#0a0a0a` | Page background |
+| `surface-soft` | `#f8f9fa` | `#111111` | Alternating bands, pill-group background |
+| `surface-card` | `#f5f5f5` | `#171717` | Feature and testimonial cards, available calendar days |
+| `hairline` | `#e5e7eb` | `#262626` | Borders, dividers, inputs |
+| `ink` | `#111111` | `#fafafa` | Headings and primary text |
+| `body` | `#374151` | `#d4d4d8` | Running text |
+| `muted` | `#6b7280` | `#a1a1aa` | Secondary text on white |
+| `primary` | `#111111` | `#ffffff` | Primary buttons, selected calendar day |
+| `surface-dark` | `#101010` | `#000000` | Footer, the only dark surface |
+| `success` / `error` | `#10b981` / `#ef4444` | same | Icons, borders and tinted backgrounds |
+| Badge pastels | orange, pink, violet, emerald | same | Avatar fills and confetti only, never on buttons |
+
+**Radius:** 8px for buttons and inputs, 12px for cards, 16px for the booking widget, pills for badges and tab groups, circles for avatars and icon buttons. **Shadows:** only `0 1px 2px` (active tab) and `0 4px 12px` (booking widget). **Spacing:** 4px base unit, 96px between sections (64px on phones), 32px or 24px inside cards, 1200px maximum width.
 
 ### Typography
 
-- **Fraunces** (serif), for headings and the brand name. Its character gives the salon a boutique feel.
-- **Inter** (sans-serif), for body text, forms and data. It's highly legible at small sizes and on screens.
+- **Cal Sans** for display headings, loaded through `next/font`. Cal.com has since published it on Google Fonts, so the substitute the spec suggests isn't needed. It ships as one weight that's already drawn as the display weight, so `font-synthesis: none` stops the browser faking a heavier version.
+- **Inter** for everything else: body, buttons, navigation, captions and forms.
 
-Both are self-hosted through `next/font`, so there's no layout shift and no request to Google at runtime.
+Utilities mirror the spec's scale: `display-xl` (64px, -2px tracking) down to `display-sm` (28px), then `title-lg/md/sm`, `body-md/sm` and `caption`. The hero headline steps from 64px to 32px on phones.
 
 ### Components
 
-Reusable styles are defined as Tailwind `@utility` classes, so the look stays consistent without a component library:
-
-| Class | Purpose |
-| --- | --- |
-| `btn-primary` | Main action (one per view where possible) |
-| `btn-secondary` | Secondary actions |
-| `btn-danger` | Destructive actions (cancel) |
-| `card` | White rounded panel with a subtle border |
-| `input`, `label` | Form fields, with built-in focus and `aria-invalid` error styling |
-| `eyebrow` | Small uppercase section labels |
-
-**Shape language:** fully rounded (pill) buttons and softly rounded cards (`rounded-2xl`) keep the interface friendly.
-
-### Themes (light and dark)
-
-Components never use raw colours. They use semantic tokens (`cream`, `surface`, `ink`, `accent`, …) defined in `globals.css` as CSS variables, with one set of values per theme under `:root` and `[data-theme="dark"]`. Switching theme only changes the variables, so every component follows automatically.
-
-- **No flash on load.** A tiny inline script in `<head>` runs before the first paint and sets `data-theme` from the saved choice, or else the OS preference. The server renders a default, and `suppressHydrationWarning` lets the script's change stand.
-- **Separate roles for "primary" and "accent".** In dark mode no single plum works both as a button background with white text *and* as text on a dark background, so buttons use `plum-600` (primary) and text or links use `accent`. All text pairs pass WCAG AA in both themes.
-
-| Token | Light | Dark |
+| Utility / component | Spec component | Notes |
 | --- | --- | --- |
-| `cream` (page) | `#fbf7f2` | `#151012` |
-| `surface` (cards) | `#ffffff` | `#1e171b` |
-| `ink` (text) | `#1f1a17` | `#f5ede6` |
-| `muted` | `#6b5f57` | `#b3a59d` |
-| `plum-600` (primary) | `#6b2d5e` | `#a0508e` |
-| `accent` (text/links) | `#6b2d5e` | `#e0a9d2` |
+| `btn-primary`, `btn-secondary` | button-primary / secondary | 40px tall, 8px radius, 14px/600 label. Only the pressed state changes the look |
+| `icon-btn` | button-icon-circular | 36px circle: theme toggle, menu, date arrows |
+| `input` | text-input | 40px, hairline border that turns ink on focus |
+| `badge` | badge-pill | Durations, status, section labels |
+| `pill-group`, `pill-tab(-active)` | nav-pill-group, category-tab | "How it works" step switcher and admin tabs |
+| `feature-card` | feature-card | Grey service cards on the home page |
+| `outline-card` | feature-icon / product-mockup card | Service picker, forms, hours and contact |
+| `mockup-card` | hero-app-mockup-card | The booking widget, confirmation card and hero booker |
+| `MonthCalendar` | product UI shown in-card | Available days on grey tiles, selected day solid, today dotted, unavailable days faint |
+| Footer | footer | 4 columns → 2 → 1, on-dark-soft links |
+
+**Page pacing** alternates surfaces as the spec prescribes: white hero with the live booking widget, white band with grey feature cards, light-grey band with the white product mockup, white band with grey testimonials, light-grey band with white cards, a light CTA band and the dark footer.
+
+### Deviations from the spec (and why)
+
+- **Semantic text colours.** The spec's `success` and `error` are below 4.5:1 as text on white, so they're used for icons, borders and tints, and text uses darker variants (`success-text` `#047857`, `error-text` `#b91c1c`).
+- **Secondary text on grey cards.** `muted` on `surface-card` measures 4.43:1, just under AA, so text on grey cards uses `body` (9.45:1).
+- **Faint grey.** `muted-soft` (`#898989`, 3.5:1) is used only for unavailable calendar days (disabled controls are exempt under WCAG 1.4.3) and on the dark footer (5.4:1). Placeholders use `muted`.
+- **Dark mode.** The spec is light-only. Slotly keeps an optional dark theme built from the spec's own dark surface tokens, with the primary colour inverted to white.
+- **Avatar initials** are `#111111` rather than white, because white fails contrast on the pastel fills.
+
+### Themes
+
+A tiny inline script in `<head>` sets `data-theme` before the first paint, from the saved choice or else the OS preference, so there's no flash. The server renders a default, and `suppressHydrationWarning` lets the script's change stand. Switching theme only swaps the CSS variables.
 
 ### Motion
 
-Motion should feel **fast, purposeful and optional**:
+The spec leaves animation out of scope and rules out hover effects, so motion is limited to small, purposeful moments:
 
 | Where | Technique | Why |
 | --- | --- | --- |
-| Hero headline and entrance | CSS keyframes with staggered `animation-delay` | Runs from the first paint, before JavaScript loads, so the hero is never blank on slow mobile connections |
-| Section reveals on scroll | Motion + `useInView` | Content is visible in the server HTML. Only sections still off-screen after hydration are hidden and then revealed, so nothing waits on JavaScript to appear |
-| Service cards | Motion values + springs | Tilt toward the pointer with a spotlight following it (mouse only, so touch devices aren't affected) |
-| Booking demo, testimonials | `AnimatePresence` | Auto-play pauses on hover and focus, and when off-screen |
-| Date picker | Shared `layoutId` + optimistic state | The highlight slides to the tapped date immediately while the server renders that day's times |
-| Time slots, page transitions | CSS `animate-rise` / `template.tsx` | Pure CSS, so no JavaScript cost |
-| Confirmation | `canvas-confetti` | One celebratory burst, skipped for reduced motion |
+| Hero entrance, time slots, page transitions | CSS keyframes (`animate-word`, `animate-rise`, `template.tsx`) | Runs from the first paint without JavaScript, so nothing is blank on slow mobile connections |
+| Section reveals | Motion + `useInView` | Content is visible in the server HTML; only sections still off-screen after hydration are hidden, then revealed |
+| Calendar selection | Optimistic state | The tapped day turns solid immediately while the server renders its times |
+| "How it works" | `AnimatePresence` | Auto-advances only while on screen; pauses on hover and focus |
+| Confirmation | `canvas-confetti` | One burst in the spec's pastels, skipped for reduced motion |
 
-**Reduced motion:** `MotionConfig reducedMotion="user"` covers every Motion animation, and a `prefers-reduced-motion` media query neutralises all CSS animations and transitions. Auto-advancing carousels stop.
+**Reduced motion:** `MotionConfig reducedMotion="user"` covers every Motion animation, and a `prefers-reduced-motion` media query neutralises CSS animations and transitions.
 
 ### Interaction and accessibility
 
-- **Mobile-first.** Layouts start at phone width, the date picker scrolls horizontally, and the time grid goes from 3 columns on phones to 5 on desktop.
-- **Keyboard.** A "Skip to content" link, visible focus outlines on every interactive element, and native `<form>`, `<button>` and `<details>` elements.
-- **Screen readers.** Form errors are linked with `aria-describedby`, error and status messages use `role="alert"` and `role="status"`, the booking progress uses `aria-current="step"` and loading skeletons set `aria-busy`.
-- **Honest feedback.** Buttons show pending states ("Confirming…"), a taken slot gets a clear message instead of a generic error, and empty states explain what to do next.
+- **Responsive.** Hamburger menu below 768px, opening a full-screen sheet anchored under the header. Grids collapse 3 → 2 → 1, and the three-pane booking widget stacks on phones.
+- **Keyboard.** A "Skip to content" link, a visible 2px focus outline on every control (in the base CSS layer, so components such as inputs can refine it), and native `<form>`, `<button>` and `<details>` elements.
+- **Screen readers.** The calendar is a labelled grid ("Friday 25 September, available"), form errors are linked with `aria-describedby`, messages use `role="alert"` and `role="status"`, tabs use `role="tab"` with `aria-selected`, and loading skeletons set `aria-busy`.
+- **Touch.** Buttons and inputs are 40px tall, text links have 40px tap areas, and inputs use 16px text so iOS doesn't zoom on focus.
