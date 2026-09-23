@@ -49,16 +49,16 @@ The demo is set up for **Glow Studio**, a fictional salon in Lagos.
 - Browse services with prices and durations
 - 3-step booking flow: service → date & time → details
 - Live availability that accounts for service length, opening hours, existing bookings and same-day notice
-- Booking reference "ticket" with confetti, **Add to Google Calendar** and a downloadable `.ics` file
+- Confirmation card (What / When / Who / Where) with **Add to Google Calendar** and a downloadable `.ics` file
 - Self-service cancellation (requires the booking email)
 - Mobile-first, keyboard-accessible, works without JavaScript for core flows
 
-**Interaction & polish**
-- Light and dark themes with no flash on load, and colour contrast checked to WCAG AA in both
-- Animated landing page: word-by-word headline, scroll reveals, tilt-and-spotlight service cards, counting stats, an auto-playing booking demo and a testimonials carousel
-- Date picker whose highlight slides instantly (optimistic UI) while times load; slots cascade in
-- Micro-interactions: pressable buttons, shake on invalid input, page fade transitions
-- Every animation respects the OS "reduce motion" setting
+**Design & interaction**
+- Visual system follows a Cal.com-style design spec: monochrome canvas, near-black CTAs, Cal Sans display type with Inter body, 8/12/16px radius scale, light-grey cards and a dark footer
+- Booking widget with a real **month calendar** (available days on grey tiles, selected day solid, today marked) beside the day's time slots; selection updates instantly (optimistic UI)
+- Live booking widget in the hero, pill-in-pill tab switcher for "How it works", testimonial cards with pastel avatars and star ratings
+- Light and dark themes with no flash on load; text colours checked to WCAG AA
+- Subtle motion only (entrance, scroll reveals, pressed states); every animation respects the OS "reduce motion" setting
 - Mobile menu, clickable phone and email, and 16px form fields so iPhones don't zoom in
 - Clear success and error messages for every action, a custom 404 page and a friendly error page
 - Unique page titles and descriptions, a branded favicon and iOS icon, and a generated social share image
@@ -74,7 +74,7 @@ The demo is set up for **Glow Studio**, a fictional salon in Lagos.
 | --- | --- |
 | Framework | Next.js 16 (App Router, Server Components, Server Actions) |
 | Language | TypeScript |
-| Styling | Tailwind CSS v4 (design tokens as CSS variables for theming) |
+| Styling | Tailwind CSS v4, design tokens as CSS variables (Cal.com-style spec), Cal Sans + Inter |
 | Animation | Motion (React) + CSS keyframes |
 | Database | SQLite locally / Turso in production, via Drizzle ORM |
 | Validation | Zod |
@@ -137,7 +137,7 @@ Every push to `main` runs lint, tests and a production build in GitHub Actions, 
 ```
 src/
   app/            routes (booking flow, booking lookup, admin) + server actions
-  components/     client components (forms, step indicator)
+  components/     booking widget, month calendar, forms, motion helpers
   db/             Drizzle schema and client
   lib/            time/slot logic, queries, auth, formatting
 scripts/seed.ts   demo data

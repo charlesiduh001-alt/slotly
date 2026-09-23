@@ -11,25 +11,25 @@ export default function GlobalError({ retry }: { error: Error & { digest?: strin
           minHeight: "100vh",
           display: "grid",
           placeItems: "center",
-          background: "#fbf7f2",
-          color: "#1f1a17",
+          background: "#ffffff",
+          color: "#111111",
           fontFamily: "system-ui, sans-serif",
           textAlign: "center",
           padding: 24,
         }}
       >
         <div>
-          <h1 style={{ fontFamily: "Georgia, serif", fontSize: 32, margin: 0 }}>Something went wrong</h1>
-          <p style={{ color: "#6b5f57", marginTop: 12 }}>Please try again in a moment.</p>
+          <h1 style={{ fontSize: 32, fontWeight: 600, letterSpacing: -1, margin: 0 }}>Something went wrong</h1>
+          <p style={{ color: "#6b7280", marginTop: 12 }}>Please try again in a moment.</p>
           <button
             type="button"
             onClick={() => retry()}
             style={{
               marginTop: 24,
-              padding: "12px 28px",
-              borderRadius: 999,
+              padding: "12px 20px",
+              borderRadius: 8,
               border: 0,
-              background: "#6b2d5e",
+              background: "#111111",
               color: "white",
               fontWeight: 600,
               fontSize: 16,

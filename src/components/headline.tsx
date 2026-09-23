@@ -24,7 +24,7 @@ export function AnimatedHeadline({
         <Fragment key={i}>
           <span className="inline-block overflow-hidden pb-[0.12em] align-bottom">
             <span
-              className={`inline-block animate-word ${hi ? "text-gradient" : ""}`}
+              className={`inline-block animate-word ${hi ? "text-ink" : ""}`}
               style={{ animationDelay: `${0.1 + i * 0.07}s` }}
             >
               {w}

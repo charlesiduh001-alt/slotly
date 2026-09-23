@@ -11,13 +11,13 @@ export function BookingForm({ serviceId, date, startMin }: Props) {
   const v = state.values ?? {};
 
   return (
-    <form action={action} className="mt-6 space-y-5" noValidate>
+    <form action={action} className="mt-6 space-y-4" noValidate>
       <input type="hidden" name="serviceId" value={serviceId} />
       <input type="hidden" name="date" value={date} />
       <input type="hidden" name="startMin" value={startMin} />
 
       {state.message && (
-        <p role="alert" className="rounded-xl border border-danger/30 bg-danger/5 px-4 py-3 text-sm text-danger">
+        <p role="alert" className="rounded-md border border-error/30 bg-error/10 px-4 py-3 body-sm text-error-text">
           {state.message}
         </p>
       )}
@@ -35,7 +35,7 @@ export function BookingForm({ serviceId, date, startMin }: Props) {
         />
       </Field>
 
-      <div className="grid gap-5 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2">
         <Field label="Email" name="email" error={errors.email}>
           <input
             id="email"
@@ -73,12 +73,12 @@ export function BookingForm({ serviceId, date, startMin }: Props) {
           maxLength={500}
           defaultValue={v.notes}
           placeholder="Anything we should know? Hair length, allergies, etc."
-          className="input"
+          className="input h-auto py-2.5"
           aria-invalid={!!errors.notes}
         />
       </Field>
 
-      <button type="submit" disabled={pending} className="btn-primary w-full py-3 text-base sm:w-auto sm:px-10">
+      <button type="submit" disabled={pending} className="btn-primary w-full">
         {pending ? "Confirming…" : "Confirm booking"}
       </button>
     </form>
@@ -103,7 +103,7 @@ function Field({
       </label>
       {children}
       {error && (
-        <p id={`${name}-error`} className="mt-1.5 text-sm text-danger">
+        <p id={`${name}-error`} className="mt-1.5 body-sm text-error-text">
           {error}
         </p>
       )}

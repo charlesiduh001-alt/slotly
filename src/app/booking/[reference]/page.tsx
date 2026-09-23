@@ -26,13 +26,12 @@ export default async function BookingPage({ params, searchParams }: PageProps<"/
 
   const { booking, service } = result;
   const now = nowInBusinessTz();
-  const isPast =
-    booking.date < now.date || (booking.date === now.date && booking.startMin <= now.minutes);
+  const isPast = booking.date < now.date || (booking.date === now.date && booking.startMin <= now.minutes);
   const cancelled = booking.status === "cancelled";
   const justBooked = Boolean(sp.new) && !cancelled;
   const upcoming = !cancelled && !isPast;
 
-  const calendarUrl = googleCalendarUrl({
+  const event = {
     uid: booking.reference,
     title: `${service.name} at ${business.name}`,
     description: `Booking reference: ${booking.reference}`,
@@ -40,152 +39,119 @@ export default async function BookingPage({ params, searchParams }: PageProps<"/
     date: booking.date,
     startMin: booking.startMin,
     endMin: booking.endMin,
-  });
+  };
+
+  const heading = cancelled
+    ? "This booking is cancelled"
+    : isPast
+      ? "This appointment has passed"
+      : justBooked
+        ? "You're booked"
+        : "Your appointment";
+  const sub = cancelled
+    ? "The time slot has been released. You're welcome to book another time."
+    : isPast
+      ? "Thanks for visiting. We hope to see you again soon."
+      : `We've saved your appointment for ${formatDate(booking.date)}.`;
 
   return (
-    <div className="relative mx-auto max-w-2xl px-4 py-12 sm:px-6">
+    <div className="container-page py-10 md:py-16">
       {justBooked && <Confetti />}
-      {justBooked && (
-        <div className="mb-10 text-center">
-          <span className="relative mx-auto grid size-16 animate-rise place-items-center rounded-full bg-success text-3xl text-white shadow-lg shadow-success/30">
-            <span aria-hidden className="absolute inset-0 animate-ping rounded-full bg-success opacity-30 [animation-iteration-count:2]" />
-            ✓
-          </span>
-          <h1 className="mt-5 animate-rise font-display text-4xl font-semibold [animation-delay:0.1s]">
-            You&apos;re booked!
-          </h1>
-          <p className="mt-2 animate-rise text-muted [animation-delay:0.2s]">
-            See you on {formatDate(booking.date)}. Save your reference to manage your booking.
+      <div className="mx-auto max-w-xl">
+        {sp.cancelled && (
+          <p role="status" className="mb-6 animate-rise rounded-md border border-hairline bg-surface-soft px-4 py-3 body-sm text-ink">
+            Your booking has been cancelled.
           </p>
-        </div>
-      )}
-      {sp.cancelled && (
-        <p role="status" className="mb-6 animate-rise rounded-xl border border-line bg-surface px-4 py-3 text-sm">
-          Your booking has been cancelled. We hope to see you another time.
-        </p>
-      )}
-      {sp.cancelError && (
-        <p role="alert" className="mb-6 animate-shake rounded-xl border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger">
-          We couldn&apos;t cancel that booking. Check the email address matches the one you booked with.
-        </p>
-      )}
+        )}
+        {sp.cancelError && (
+          <p role="alert" className="mb-6 animate-shake rounded-md border border-error/30 bg-error/10 px-4 py-3 body-sm text-error-text">
+            We couldn&apos;t cancel that booking. Check the email address matches the one you booked with.
+          </p>
+        )}
 
-      {/* Ticket */}
-      <div className="animate-rise [animation-delay:0.3s]">
-        <div className="relative overflow-hidden rounded-3xl border border-line bg-surface shadow-2xl shadow-plum-900/10">
-          <div className="relative overflow-hidden bg-gradient-to-br from-plum-600 to-plum-900 px-6 py-6 text-white">
-            <div aria-hidden className="absolute -top-10 -right-10 size-40 rounded-full bg-white/10 blur-2xl" />
-            <div className="relative flex items-start justify-between gap-4">
-              <div>
-                <p className="text-xs tracking-[0.18em] text-white/70 uppercase">{business.name}</p>
-                <p className="mt-1 font-display text-2xl font-semibold">{service.name}</p>
-              </div>
-              <StatusBadge status={cancelled ? "Cancelled" : isPast ? "Completed" : "Confirmed"} />
-            </div>
+        <div className="mockup-card animate-rise p-6 md:p-10">
+          <div className="text-center">
+            <span
+              aria-hidden
+              className={`mx-auto grid size-12 place-items-center rounded-full ${
+                cancelled ? "bg-surface-card text-muted" : "bg-success/15 text-success-text"
+              }`}
+            >
+              <svg viewBox="0 0 24 24" className="size-6" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                {cancelled ? <path d="M6 6l12 12M18 6L6 18" /> : <path d="M5 12.5l4.5 4.5L19 7" />}
+              </svg>
+            </span>
+            <h1 className="mt-5 display-sm">{heading}</h1>
+            <p className="mt-2 body-md text-muted">{sub}</p>
           </div>
 
-          {/* Perforation */}
-          <div aria-hidden className="relative h-6">
-            <span className="absolute top-1/2 -left-3 size-6 -translate-y-1/2 rounded-full border border-line bg-cream" />
-            <span className="absolute top-1/2 -right-3 size-6 -translate-y-1/2 rounded-full border border-line bg-cream" />
-            <span className="absolute inset-x-6 top-1/2 border-t-2 border-dashed border-line" />
-          </div>
-
-          <dl className="grid gap-5 px-6 pt-2 pb-6 text-sm sm:grid-cols-2">
-            <Item label="Date" value={formatDate(booking.date)} />
-            <Item
-              label="Time"
-              value={`${formatMinutes(booking.startMin)} – ${formatMinutes(booking.endMin)}`}
-              hint={formatDuration(service.durationMin)}
+          <dl className="mt-8 divide-y divide-hairline border-y border-hairline body-sm">
+            <Row label="What" value={`${service.name} · ${formatDuration(service.durationMin)}`} />
+            <Row
+              label="When"
+              value={`${formatDate(booking.date)}, ${formatMinutes(booking.startMin)} – ${formatMinutes(booking.endMin)}`}
+              strike={cancelled}
             />
-            <Item label="Name" value={booking.customerName} />
-            <Item label="Price" value={service.priceKobo ? formatPrice(service.priceKobo) : "Free"} hint="Pay at the studio" />
-            <div className="sm:col-span-2">
-              <Item label="Where" value={business.address} />
+            <Row label="Who" value={booking.customerName} />
+            <Row label="Where" value={`${business.name}, ${business.address}`} />
+            <Row label="Price" value={`${service.priceKobo ? formatPrice(service.priceKobo) : "Free"} · pay at the studio`} />
+            <div className="grid grid-cols-[88px_1fr] gap-4 py-3.5">
+              <dt className="text-muted">Reference</dt>
+              <dd className="font-mono text-[14px] font-semibold tracking-wider text-ink">{booking.reference}</dd>
             </div>
           </dl>
 
-          <div className="flex items-center justify-between gap-4 border-t border-dashed border-line bg-sand/40 px-6 py-4">
-            <div>
-              <p className="text-xs text-muted">Booking reference</p>
-              <p className="font-mono text-xl font-semibold tracking-[0.2em]">{booking.reference}</p>
+          {upcoming && (
+            <div className="mt-6 flex flex-col gap-2 sm:flex-row">
+              <a href={googleCalendarUrl(event)} target="_blank" rel="noopener noreferrer" className="btn-secondary flex-1">
+                <CalendarIcon /> Google Calendar
+              </a>
+              <a href={`/booking/${booking.reference}/calendar`} className="btn-secondary flex-1">
+                <DownloadIcon /> Download .ics
+              </a>
             </div>
-            <Barcode seed={booking.reference} />
-          </div>
+          )}
+
+          {upcoming && (
+            <details className="group mt-6 border-t border-hairline pt-5">
+              <summary className="flex cursor-pointer list-none items-center justify-between body-sm text-muted">
+                <span>
+                  Need to make a change? <span className="font-semibold text-ink">Cancel booking</span>
+                </span>
+                <span aria-hidden className="transition-transform duration-200 group-open:rotate-45">+</span>
+              </summary>
+              <form action={cancelBookingByCustomer} className="mt-4">
+                <input type="hidden" name="reference" value={booking.reference} />
+                <label htmlFor="email" className="label">
+                  Confirm the email you booked with
+                </label>
+                <div className="flex flex-col gap-2 sm:flex-row">
+                  <input id="email" name="email" type="email" required autoComplete="email" className="input" />
+                  <button className="btn-danger">Cancel booking</button>
+                </div>
+              </form>
+            </details>
+          )}
         </div>
-      </div>
 
-      {upcoming && (
-        <div className="mt-6 flex animate-rise flex-wrap gap-3 [animation-delay:0.45s]">
-          <a href={calendarUrl} target="_blank" rel="noopener noreferrer" className="btn-secondary">
-            <CalendarIcon /> Add to Google Calendar
-          </a>
-          <a href={`/booking/${booking.reference}/calendar`} className="btn-secondary">
-            <DownloadIcon /> Download .ics
-          </a>
+        <div className="mt-6 flex flex-wrap justify-center gap-3">
+          <Link href="/book" className="btn-primary">
+            Book another appointment
+          </Link>
+          <Link href="/" className="btn-secondary">
+            Back to home
+          </Link>
         </div>
-      )}
-
-      {upcoming && (
-        <details className="card group mt-6 animate-rise p-6 [animation-delay:0.5s]">
-          <summary className="flex cursor-pointer list-none items-center justify-between font-semibold">
-            Need to cancel?
-            <span aria-hidden className="text-muted transition-transform duration-300 group-open:rotate-45">+</span>
-          </summary>
-          <form action={cancelBookingByCustomer} className="mt-4 space-y-3">
-            <input type="hidden" name="reference" value={booking.reference} />
-            <label htmlFor="email" className="label">
-              Confirm the email you booked with
-            </label>
-            <div className="flex flex-col gap-2 sm:flex-row">
-              <input id="email" name="email" type="email" required className="input" />
-              <button className="btn-danger shrink-0">Cancel booking</button>
-            </div>
-          </form>
-        </details>
-      )}
-
-      <div className="mt-8 flex flex-wrap gap-3">
-        <Link href="/book" className="btn-primary">
-          Book another appointment
-        </Link>
-        <Link href="/" className="btn-secondary">
-          Back to home
-        </Link>
       </div>
     </div>
   );
 }
 
-function Item({ label, value, hint }: { label: string; value: string; hint?: string }) {
+function Row({ label, value, strike = false }: { label: string; value: string; strike?: boolean }) {
   return (
-    <div>
-      <dt className="text-xs tracking-wide text-muted uppercase">{label}</dt>
-      <dd className="mt-1 font-medium">
-        {value}
-        {hint && <span className="block text-xs font-normal text-muted">{hint}</span>}
-      </dd>
-    </div>
-  );
-}
-
-function StatusBadge({ status }: { status: "Confirmed" | "Cancelled" | "Completed" }) {
-  const styles = {
-    Confirmed: "bg-white/15 text-white ring-1 ring-white/30",
-    Cancelled: "bg-[#b3362f] text-white",
-    Completed: "bg-white/10 text-white/80",
-  }[status];
-  return <span className={`shrink-0 rounded-full px-3 py-1 text-xs font-semibold ${styles}`}>{status}</span>;
-}
-
-/** Decorative barcode derived from the reference, so each ticket looks unique. */
-function Barcode({ seed }: { seed: string }) {
-  const bars = Array.from(seed.repeat(3)).map((ch, i) => ((ch.charCodeAt(0) + i * 7) % 3) + 1);
-  return (
-    <div aria-hidden className="flex h-10 items-stretch gap-[2px] opacity-70">
-      {bars.map((w, i) => (
-        <span key={i} className="bg-ink" style={{ width: w }} />
-      ))}
+    <div className="grid grid-cols-[88px_1fr] gap-4 py-3.5">
+      <dt className="text-muted">{label}</dt>
+      <dd className={`font-medium text-ink ${strike ? "line-through" : ""}`}>{value}</dd>
     </div>
   );
 }

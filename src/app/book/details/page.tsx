@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { EventDetails } from "@/components/booker";
 import { BookingForm } from "@/components/booking-form";
-import { Steps } from "@/components/steps";
-import { formatDuration, formatPrice } from "@/lib/format";
 import { getAvailableSlots, getService } from "@/lib/queries";
-import { formatDate, formatMinutes, isValidDateString } from "@/lib/time";
+import { isValidDateString } from "@/lib/time";
 
 export const metadata: Metadata = {
   title: "Your details",
@@ -27,10 +26,11 @@ export default async function DetailsPage({ searchParams }: PageProps<"/book/det
 
   if (!service || !valid) {
     return (
-      <div className="mx-auto max-w-xl px-4 py-16 text-center sm:px-6">
-        <h1 className="font-display text-3xl font-semibold">That time isn&apos;t available</h1>
-        <p className="mt-3 text-muted">It may have just been booked. Please pick another slot.</p>
-        <Link href={service ? `/book?service=${service.id}&date=${date}` : "/book"} className="btn-primary mt-6">
+      <div className="container-page section text-center">
+        <span className="badge">Time unavailable</span>
+        <h1 className="mt-4 display-xs md:display-md">That time isn&apos;t available</h1>
+        <p className="mx-auto mt-3 max-w-md body-md text-muted">It may have just been booked. Please pick another slot.</p>
+        <Link href={service ? `/book?service=${service.id}&date=${date}` : "/book"} className="btn-primary mt-8">
           Choose another time
         </Link>
       </div>
@@ -38,44 +38,22 @@ export default async function DetailsPage({ searchParams }: PageProps<"/book/det
   }
 
   return (
-    <div className="mx-auto grid max-w-5xl gap-8 px-4 py-10 sm:px-6 md:grid-cols-[1fr_320px]">
-      <div>
-        <Steps current={3} />
-        <h1 className="mt-8 font-display text-3xl font-semibold">Your details</h1>
-        <p className="mt-1 text-muted">We&apos;ll use these to confirm your appointment.</p>
-        <BookingForm serviceId={service.id} date={date} startMin={startMin} />
+    <div className="container-page py-10 md:py-16">
+      <Link href={`/book?service=${service.id}&date=${date}`} className="btn-text mb-5 text-muted">
+        <span aria-hidden>←</span> Back
+      </Link>
+      <div className="mockup-card mx-auto grid max-w-4xl overflow-hidden md:grid-cols-[300px_1fr]">
+        <div className="border-b border-hairline md:border-r md:border-b-0">
+          <EventDetails service={service} date={date} startMin={startMin} />
+        </div>
+        <section aria-labelledby="details-heading" className="p-6 md:p-8">
+          <h2 id="details-heading" className="title-lg">
+            Your details
+          </h2>
+          <p className="mt-1 body-sm text-muted">We&apos;ll use these to confirm your appointment.</p>
+          <BookingForm serviceId={service.id} date={date} startMin={startMin} />
+        </section>
       </div>
-
-      <aside className="card h-fit p-6 md:sticky md:top-24">
-        <p className="eyebrow">Summary</p>
-        <p className="mt-3 font-display text-xl font-semibold">{service.name}</p>
-        <dl className="mt-4 space-y-2 text-sm">
-          <div className="flex justify-between gap-4">
-            <dt className="text-muted">Date</dt>
-            <dd className="text-right font-medium">{formatDate(date)}</dd>
-          </div>
-          <div className="flex justify-between gap-4">
-            <dt className="text-muted">Time</dt>
-            <dd className="font-medium">
-              {formatMinutes(startMin)} – {formatMinutes(startMin + service.durationMin)}
-            </dd>
-          </div>
-          <div className="flex justify-between gap-4">
-            <dt className="text-muted">Duration</dt>
-            <dd className="font-medium">{formatDuration(service.durationMin)}</dd>
-          </div>
-          <div className="flex justify-between gap-4 border-t border-line pt-3">
-            <dt className="text-muted">Pay at the studio</dt>
-            <dd className="font-semibold">{service.priceKobo ? formatPrice(service.priceKobo) : "Free"}</dd>
-          </div>
-        </dl>
-        <Link
-          href={`/book?service=${service.id}&date=${date}`}
-          className="mt-4 inline-flex items-center py-2 text-sm font-medium text-accent underline-offset-4 hover:underline"
-        >
-          ← Change time
-        </Link>
-      </aside>
     </div>
   );
 }

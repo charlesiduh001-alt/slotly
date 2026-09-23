@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, eq } from "drizzle-orm";
+import { and, asc, eq, gte, lte } from "drizzle-orm";
 import { db } from "@/db";
 import { bookings, businessHours, services } from "@/db/schema";
 import { BOOKING_WINDOW_DAYS, LEAD_TIME_MIN, SLOT_STEP_MIN } from "./booking-rules";
@@ -68,15 +68,54 @@ export async function getAvailableSlots(
   });
 }
 
+export type DayAvailability = { date: string; closed: boolean; slots: number[] };
+
+/**
+ * Free slots for every date in the booking window, in two queries (hours +
+ * bookings) instead of two per day. Powers the month calendar.
+ */
+export async function getAvailability(service: { durationMin: number }): Promise<DayAvailability[]> {
+  const dates = getBookableDates();
+  const [hours, booked] = await Promise.all([
+    db.select().from(businessHours),
+    db
+      .select({ date: bookings.date, startMin: bookings.startMin, endMin: bookings.endMin })
+      .from(bookings)
+      .where(
+        and(
+          eq(bookings.status, "confirmed"),
+          gte(bookings.date, dates[0]),
+          lte(bookings.date, dates[dates.length - 1]),
+        ),
+      ),
+  ]);
+  const hoursByDay = new Map(hours.map((h) => [h.dayOfWeek, h]));
+  const now = nowInBusinessTz();
+
+  return dates.map((date) => {
+    const h = hoursByDay.get(dayOfWeek(date));
+    if (!h || h.closed) return { date, closed: true, slots: [] };
+    return {
+      date,
+      closed: false,
+      slots: generateSlots({
+        openMin: h.openMin,
+        closeMin: h.closeMin,
+        durationMin: service.durationMin,
+        booked: booked.filter((b) => b.date === date),
+        stepMin: SLOT_STEP_MIN,
+        earliestMin: date === now.date ? now.minutes + LEAD_TIME_MIN : 0,
+      }),
+    };
+  });
+}
+
 /** The first bookable date with at least one free slot, and its slots. */
 export async function findNextAvailable(
   service: { durationMin: number },
 ): Promise<{ date: string; slots: number[] } | null> {
-  for (const date of getBookableDates()) {
-    const slots = await getAvailableSlots(service, date);
-    if (slots.length) return { date, slots };
-  }
-  return null;
+  const day = (await getAvailability(service)).find((d) => d.slots.length);
+  return day ? { date: day.date, slots: day.slots } : null;
 }
 
 export async function getBookingByReference(reference: string) {

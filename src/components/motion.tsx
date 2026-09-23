@@ -1,6 +1,6 @@
 "use client";
 
-import { MotionConfig, motion, useInView, useMotionValue, useSpring, useTransform, animate } from "motion/react";
+import { MotionConfig, motion, useInView, animate } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -18,15 +18,19 @@ export function MotionProvider({ children }: { children: React.ReactNode }) {
 export function Reveal({
   children,
   delay = 0,
-  y = 24,
+  y = 16,
   className,
+  as = "div",
 }: {
   children: React.ReactNode;
   delay?: number;
   y?: number;
   className?: string;
+  /** Render as a list item so it can sit directly inside <ul>. */
+  as?: "div" | "li";
 }) {
-  const ref = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement & HTMLLIElement>(null);
+  const Comp = as === "li" ? motion.li : motion.div;
   const inView = useInView(ref, { once: true, margin: "-80px" });
   const [phase, setPhase] = useState<"static" | "hidden" | "shown">("static");
 
@@ -42,7 +46,7 @@ export function Reveal({
   }, [inView, phase]);
 
   return (
-    <motion.div
+    <Comp
       ref={ref}
       className={className}
       initial={false}
@@ -50,52 +54,7 @@ export function Reveal({
       transition={phase === "shown" ? { duration: 0.7, delay, ease: EASE } : { duration: 0 }}
     >
       {children}
-    </motion.div>
-  );
-}
-
-/** Card that tilts toward the pointer with a soft spotlight following it. */
-export function TiltCard({ children, className }: { children: React.ReactNode; className?: string }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const px = useMotionValue(0.5);
-  const py = useMotionValue(0.5);
-  const rotateX = useSpring(useTransform(py, [0, 1], [6, -6]), { stiffness: 200, damping: 20 });
-  const rotateY = useSpring(useTransform(px, [0, 1], [-6, 6]), { stiffness: 200, damping: 20 });
-  const spotX = useTransform(px, (v) => `${v * 100}%`);
-  const spotY = useTransform(py, (v) => `${v * 100}%`);
-  const spotlight = useTransform(
-    [spotX, spotY],
-    ([x, y]) => `radial-gradient(420px circle at ${x} ${y}, var(--c-glow), transparent 55%)`,
-  );
-
-  function onMove(e: React.PointerEvent) {
-    if (e.pointerType !== "mouse") return;
-    const r = ref.current!.getBoundingClientRect();
-    px.set((e.clientX - r.left) / r.width);
-    py.set((e.clientY - r.top) / r.height);
-  }
-  function onLeave() {
-    px.set(0.5);
-    py.set(0.5);
-  }
-
-  return (
-    <motion.div
-      ref={ref}
-      onPointerMove={onMove}
-      onPointerLeave={onLeave}
-      style={{ rotateX, rotateY, transformPerspective: 900 }}
-      whileHover={{ y: -4 }}
-      transition={{ duration: 0.3 }}
-      className={`group relative ${className ?? ""}`}
-    >
-      <motion.div
-        aria-hidden
-        className="pointer-events-none absolute inset-0 rounded-[inherit] opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-        style={{ background: spotlight }}
-      />
-      {children}
-    </motion.div>
+    </Comp>
   );
 }
 

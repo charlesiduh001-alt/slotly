@@ -11,30 +11,38 @@ export const metadata: Metadata = {
 export default async function FindBookingPage({ searchParams }: PageProps<"/booking">) {
   const { notice } = await searchParams;
   return (
-    <div className="mx-auto max-w-md px-4 py-16 sm:px-6">
-      {isNoticeKey(notice) && (
-        <div className="mb-6">
-          <Notice notice={notice} />
+    <div className="container-page section">
+      <div className="mx-auto max-w-md">
+        {isNoticeKey(notice) && (
+          <div className="mb-6">
+            <Notice notice={notice} />
+          </div>
+        )}
+        <div className="outline-card p-8">
+          <h1 className="display-sm">Find my booking</h1>
+          <p className="mt-2 body-sm text-muted">
+            Enter the reference from your confirmation. It looks like{" "}
+            <span className="font-mono font-semibold text-ink">SL-7K2M9Q</span>.
+          </p>
+          <form action={findBooking} className="mt-6">
+            <label htmlFor="reference" className="label">
+              Booking reference
+            </label>
+            <div className="flex gap-2">
+              <input
+                id="reference"
+                name="reference"
+                required
+                placeholder="SL-XXXXXX"
+                autoCapitalize="characters"
+                autoComplete="off"
+                className="input uppercase"
+              />
+              <button className="btn-primary">Find</button>
+            </div>
+          </form>
         </div>
-      )}
-      <h1 className="font-display text-3xl font-semibold">Find my booking</h1>
-      <p className="mt-2 text-muted">
-        Enter the reference from your confirmation (it looks like <strong>SL-7K2M9Q</strong>).
-      </p>
-      <form action={findBooking} className="mt-6 flex gap-2">
-        <label htmlFor="reference" className="sr-only">
-          Booking reference
-        </label>
-        <input
-          id="reference"
-          name="reference"
-          required
-          placeholder="SL-XXXXXX"
-          autoCapitalize="characters"
-          className="input uppercase"
-        />
-        <button className="btn-primary shrink-0">Find</button>
-      </form>
+      </div>
     </div>
   );
 }

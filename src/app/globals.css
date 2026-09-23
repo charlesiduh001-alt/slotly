@@ -1,102 +1,131 @@
 @import "tailwindcss";
 
-/* Theme is set on <html data-theme="light|dark"> by an inline script in layout.tsx. */
+/*
+ * Design tokens follow the Cal.com-style spec (DESIGN (1).md): monochrome
+ * canvas, near-black primary, light-grey cards, dark footer. Light values are
+ * the spec's; dark values are derived from its surface-dark tokens.
+ * Theme is set on <html data-theme="light|dark"> by an inline script in layout.tsx.
+ */
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
-/* Colour values per theme. Components only use the semantic tokens below. */
 :root {
-  --c-bg: #fbf7f2;
-  --c-surface: #ffffff;
-  --c-sand: #f1e8dd;
-  --c-line: #e6dace;
-  --c-ink: #1f1a17;
-  --c-muted: #6b5f57;
-  --c-tint: #f7eff5;
-  --c-tint-strong: #eedbe8;
-  --c-primary: #6b2d5e;
-  --c-primary-hover: #56234b;
-  --c-accent: #6b2d5e;
-  --c-deep: #2e1128;
-  --c-gold: #9a6b1f;
-  --c-success: #2f7a55;
-  --c-danger: #b3362f;
-  --c-glow: rgb(107 45 94 / 0.14);
+  --c-primary: #111111;
+  --c-primary-active: #242424;
+  --c-primary-disabled: #e5e7eb;
+  --c-on-primary: #ffffff;
+  --c-ink: #111111;
+  --c-body: #374151;
+  --c-muted: #6b7280;
+  --c-muted-soft: #898989;
+  --c-hairline: #e5e7eb;
+  --c-hairline-soft: #f3f4f6;
+  --c-canvas: #ffffff;
+  --c-surface-soft: #f8f9fa;
+  --c-surface-card: #f5f5f5;
+  --c-surface-strong: #e5e7eb;
+  --c-surface-dark: #101010;
+  --c-surface-dark-elevated: #1a1a1a;
+  --c-on-dark: #ffffff;
+  --c-on-dark-soft: #a1a1aa;
+  --c-accent: #3b82f6;
+  --c-success: #10b981;
+  --c-warning: #f59e0b;
+  --c-error: #ef4444;
+  /* Text-safe variants of the semantic colours (the spec values are below
+     4.5:1 on white, so they're used for fills, borders and icons). */
+  --c-success-text: #047857;
+  --c-error-text: #b91c1c;
   color-scheme: light;
 }
 
 [data-theme="dark"] {
-  --c-bg: #151012;
-  --c-surface: #1e171b;
-  --c-sand: #231b1f;
-  --c-line: #3a2e34;
-  --c-ink: #f5ede6;
-  --c-muted: #b3a59d;
-  --c-tint: #2a1b26;
-  --c-tint-strong: #3d2437;
-  --c-primary: #a0508e;
-  --c-primary-hover: #b05c9c;
-  --c-accent: #e0a9d2;
-  --c-deep: #2a0f25;
-  --c-gold: #c8963e;
-  --c-success: #5cc493;
-  --c-danger: #f08078;
-  --c-glow: rgb(224 169 210 / 0.12);
+  --c-primary: #ffffff;
+  --c-primary-active: #e5e5e5;
+  --c-primary-disabled: #2a2a2a;
+  --c-on-primary: #111111;
+  --c-ink: #fafafa;
+  --c-body: #d4d4d8;
+  --c-muted: #a1a1aa;
+  --c-muted-soft: #8a8a8a;
+  --c-hairline: #262626;
+  --c-hairline-soft: #1c1c1c;
+  --c-canvas: #0a0a0a;
+  --c-surface-soft: #111111;
+  --c-surface-card: #171717;
+  --c-surface-strong: #262626;
+  --c-surface-dark: #000000;
+  --c-surface-dark-elevated: #141414;
+  --c-success-text: #34d399;
+  --c-error-text: #f87171;
   color-scheme: dark;
 }
 
 @theme inline {
-  --color-cream: var(--c-bg);
-  --color-surface: var(--c-surface);
-  --color-sand: var(--c-sand);
-  --color-line: var(--c-line);
+  --color-primary: var(--c-primary);
+  --color-primary-active: var(--c-primary-active);
+  --color-primary-disabled: var(--c-primary-disabled);
+  --color-on-primary: var(--c-on-primary);
   --color-ink: var(--c-ink);
+  --color-body: var(--c-body);
   --color-muted: var(--c-muted);
-  --color-plum-50: var(--c-tint);
-  --color-plum-100: var(--c-tint-strong);
-  --color-plum-600: var(--c-primary);
-  --color-plum-700: var(--c-primary-hover);
-  --color-plum-900: var(--c-deep);
+  --color-muted-soft: var(--c-muted-soft);
+  --color-hairline: var(--c-hairline);
+  --color-hairline-soft: var(--c-hairline-soft);
+  --color-canvas: var(--c-canvas);
+  --color-surface-soft: var(--c-surface-soft);
+  --color-surface-card: var(--c-surface-card);
+  --color-surface-strong: var(--c-surface-strong);
+  --color-surface-dark: var(--c-surface-dark);
+  --color-surface-dark-elevated: var(--c-surface-dark-elevated);
+  --color-on-dark: var(--c-on-dark);
+  --color-on-dark-soft: var(--c-on-dark-soft);
   --color-accent: var(--c-accent);
-  --color-gold: var(--c-gold);
   --color-success: var(--c-success);
-  --color-danger: var(--c-danger);
+  --color-warning: var(--c-warning);
+  --color-error: var(--c-error);
+  --color-success-text: var(--c-success-text);
+  --color-error-text: var(--c-error-text);
+  --color-badge-orange: #fb923c;
+  --color-badge-pink: #ec4899;
+  --color-badge-violet: #8b5cf6;
+  --color-badge-emerald: #34d399;
 
-  --font-sans: var(--font-inter);
-  --font-display: var(--font-fraunces);
+  --font-sans: var(--font-inter), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display: var(--font-cal-sans), var(--font-inter), sans-serif;
 
-  --animate-page-in: page-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
-  --animate-rise: rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
-  --animate-word: word 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+  /* Radius scale from the spec: md 8 (buttons, inputs), lg 12 (cards), xl 16 (hero mockup). */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  --shadow-soft: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-elevated: 0 4px 12px rgba(0, 0, 0, 0.08);
+
+  --animate-page-in: page-in 0.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-rise: rise 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  --animate-word: word 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
   --animate-shake: shake 0.4s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-  --animate-float: float 7s ease-in-out infinite;
-  --animate-drift: drift 18s ease-in-out infinite alternate;
 }
 
 @keyframes page-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: none; }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 @keyframes rise {
-  from { opacity: 0; transform: translateY(10px) scale(0.97); }
+  from { opacity: 0; transform: translateY(6px); }
   to { opacity: 1; transform: none; }
 }
 @keyframes word {
-  from { opacity: 0; transform: translateY(110%); }
+  from { opacity: 0; transform: translateY(100%); }
   to { opacity: 1; transform: none; }
 }
 @keyframes shake {
   10%, 90% { transform: translateX(-1px); }
   20%, 80% { transform: translateX(2px); }
-  30%, 50%, 70% { transform: translateX(-4px); }
-  40%, 60% { transform: translateX(4px); }
-}
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-@keyframes drift {
-  0% { transform: translate(0, 0) scale(1); }
-  100% { transform: translate(-60px, 40px) scale(1.15); }
+  30%, 50%, 70% { transform: translateX(-3px); }
+  40%, 60% { transform: translateX(3px); }
 }
 
 html {
@@ -104,14 +133,22 @@ html {
 }
 
 body {
-  background: var(--c-bg);
-  color: var(--c-ink);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  background: var(--c-canvas);
+  color: var(--c-body);
 }
 
 ::selection {
-  background: var(--c-tint-strong);
+  background: var(--c-surface-strong);
   color: var(--c-ink);
+}
+
+/* Visible keyboard focus everywhere (focus is not hover, so it stays).
+   In the base layer so component utilities (e.g. inputs) can refine it. */
+@layer base {
+  :focus-visible {
+    outline: 2px solid var(--c-ink);
+    outline-offset: 2px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -123,33 +160,156 @@ body {
   }
 }
 
+/* ---- Typography scale ------------------------------------------------- */
+/* Cal Sans ships one weight that is already the display weight; disable
+   synthetic bolding so "600" never renders a faux-bold version. */
+@utility display-xl {
+  font-family: var(--font-display);
+  font-size: 64px;
+  line-height: 1.05;
+  letter-spacing: -2px;
+  font-weight: 600;
+  font-synthesis: none;
+  color: var(--c-ink);
+}
+@utility display-lg {
+  font-family: var(--font-display);
+  font-size: 48px;
+  line-height: 1.1;
+  letter-spacing: -1.5px;
+  font-weight: 600;
+  font-synthesis: none;
+  color: var(--c-ink);
+}
+@utility display-md {
+  font-family: var(--font-display);
+  font-size: 36px;
+  line-height: 1.15;
+  letter-spacing: -1px;
+  font-weight: 600;
+  font-synthesis: none;
+  color: var(--c-ink);
+}
+@utility display-sm {
+  font-family: var(--font-display);
+  font-size: 28px;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+  font-weight: 600;
+  font-synthesis: none;
+  color: var(--c-ink);
+}
+@utility display-xs {
+  /* Mobile step for hero h1 (spec: 64 → 32px). */
+  font-family: var(--font-display);
+  font-size: 32px;
+  line-height: 1.1;
+  letter-spacing: -0.75px;
+  font-weight: 600;
+  font-synthesis: none;
+  color: var(--c-ink);
+}
+@utility title-lg {
+  font-size: 22px;
+  line-height: 1.3;
+  letter-spacing: -0.3px;
+  font-weight: 600;
+  color: var(--c-ink);
+}
+@utility title-md {
+  font-size: 18px;
+  line-height: 1.4;
+  font-weight: 600;
+  color: var(--c-ink);
+}
+@utility title-sm {
+  font-size: 16px;
+  line-height: 1.4;
+  font-weight: 600;
+  color: var(--c-ink);
+}
+@utility body-md {
+  font-size: 16px;
+  line-height: 1.5;
+}
+@utility body-sm {
+  font-size: 14px;
+  line-height: 1.5;
+}
+@utility caption {
+  font-size: 13px;
+  line-height: 1.4;
+  font-weight: 500;
+}
+@utility nav-link {
+  font-size: 14px;
+  line-height: 1.4;
+  font-weight: 500;
+}
+
+/* ---- Layout ----------------------------------------------------------- */
+@utility container-page {
+  @apply mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-8;
+}
+@utility section {
+  /* spec.spacing.section = 96px; tighter on phones. */
+  @apply py-16 md:py-24;
+}
+
+/* ---- Components ------------------------------------------------------- */
 @utility btn {
-  @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition-[color,background-color,border-color,box-shadow,transform] duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-60 disabled:active:scale-100;
+  @apply inline-flex h-10 shrink-0 cursor-pointer items-center justify-center gap-2 rounded-md px-5 text-[14px] leading-none font-semibold whitespace-nowrap transition-colors duration-150 select-none disabled:cursor-not-allowed;
 }
 @utility btn-primary {
-  @apply btn bg-plum-600 text-white shadow-lg shadow-plum-600/20 hover:bg-plum-700 hover:shadow-xl hover:shadow-plum-600/30;
+  @apply btn bg-primary text-on-primary active:bg-primary-active disabled:bg-primary-disabled disabled:text-muted;
 }
 @utility btn-secondary {
-  @apply btn border border-line bg-surface text-ink hover:border-accent hover:text-accent;
+  @apply btn border border-hairline bg-canvas text-ink active:bg-surface-soft disabled:text-muted;
 }
 @utility btn-danger {
-  @apply btn border border-danger/30 bg-surface text-danger hover:border-danger hover:bg-danger/10;
+  @apply btn border border-hairline bg-canvas text-error-text active:bg-surface-soft;
 }
-@utility card {
-  @apply rounded-2xl border border-line bg-surface;
+@utility btn-text {
+  @apply inline-flex min-h-10 cursor-pointer items-center gap-1.5 text-[14px] font-semibold text-ink;
 }
-@utility glass {
-  @apply border border-line/70 bg-surface/70 backdrop-blur-xl;
+@utility icon-btn {
+  @apply grid size-9 shrink-0 cursor-pointer place-items-center rounded-full border border-hairline bg-canvas text-ink transition-colors active:bg-surface-soft;
+}
+@utility text-link {
+  @apply text-ink underline-offset-4 hover:underline;
+}
+@utility feature-card {
+  @apply rounded-lg bg-surface-card p-8;
+}
+@utility outline-card {
+  /* feature-icon-card / product-mockup-card */
+  @apply rounded-lg border border-hairline bg-canvas p-6;
+}
+@utility mockup-card {
+  /* hero-app-mockup-card */
+  @apply rounded-xl border border-hairline bg-canvas shadow-elevated;
 }
 @utility input {
-  @apply w-full rounded-xl border border-line bg-surface px-4 py-3 text-base text-ink sm:py-2.5 sm:text-sm transition-[border-color,box-shadow] placeholder:text-muted/70 focus:border-accent focus:ring-4 focus:ring-plum-100 focus:outline-none aria-invalid:animate-shake aria-invalid:border-danger;
+  @apply h-10 w-full rounded-md border border-hairline bg-canvas px-3.5 text-base text-ink transition-[border-color,box-shadow] placeholder:text-muted-soft focus:border-ink focus:shadow-[0_0_0_1px_var(--c-ink)] focus:outline-none aria-invalid:animate-shake aria-invalid:border-error;
 }
 @utility label {
-  @apply mb-1.5 block text-sm font-medium text-ink;
+  @apply mb-1.5 block text-[14px] leading-snug font-medium text-ink;
 }
-@utility eyebrow {
-  @apply text-xs font-semibold tracking-[0.18em] text-accent uppercase;
+@utility badge {
+  @apply inline-flex items-center gap-1.5 rounded-full bg-surface-card px-3 py-1 text-[13px] leading-snug font-medium text-ink;
 }
-@utility text-gradient {
-  @apply bg-gradient-to-r from-accent via-accent to-gold bg-clip-text text-transparent;
+@utility avatar {
+  @apply grid size-9 shrink-0 place-items-center rounded-full text-[13px] font-medium text-[#111111];
+}
+@utility pill-group {
+  /* nav-pill-group: pill wrapper around segments */
+  @apply inline-flex flex-wrap items-center gap-1 rounded-full bg-surface-soft p-1.5;
+}
+@utility pill-tab {
+  /* category-tab */
+  @apply inline-flex cursor-pointer items-center rounded-full px-3.5 py-2 text-[14px] leading-none font-medium text-muted transition-colors;
+}
+@utility pill-tab-active {
+  /* category-tab-active */
+  @apply pill-tab bg-canvas text-ink shadow-soft;
 }

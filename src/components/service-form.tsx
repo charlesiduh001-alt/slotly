@@ -14,12 +14,12 @@ export function ServiceForm() {
   return (
     <form ref={formRef} action={action} className="mt-4 space-y-4">
       {state.error && (
-        <p role="alert" className="text-sm text-danger">
+        <p role="alert" className="rounded-md border border-error/30 bg-error/10 px-3 py-2 body-sm text-error-text">
           {state.error}
         </p>
       )}
       {state.ok && (
-        <p role="status" className="text-sm text-success">
+        <p role="status" className="rounded-md border border-success/30 bg-success/10 px-3 py-2 body-sm text-success-text">
           Service added.
         </p>
       )}
@@ -29,7 +29,7 @@ export function ServiceForm() {
       </div>
       <div>
         <label htmlFor="description" className="label">Description</label>
-        <textarea id="description" name="description" required rows={2} maxLength={240} className="input" />
+        <textarea id="description" name="description" required rows={2} maxLength={240} className="input h-auto py-2.5" />
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div>

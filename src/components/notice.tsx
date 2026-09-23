@@ -22,8 +22,8 @@ export function Notice({ notice }: { notice: NoticeKey }) {
   return (
     <div
       role={success ? "status" : "alert"}
-      className={`flex animate-rise items-start gap-3 rounded-2xl border px-4 py-3 text-sm ${
-        success ? "border-success/30 bg-success/10 text-success" : "animate-shake border-danger/30 bg-danger/10 text-danger"
+      className={`flex animate-rise items-start gap-3 rounded-md border px-4 py-3 body-sm ${
+        success ? "border-success/30 bg-success/10 text-success-text" : "animate-shake border-error/30 bg-error/10 text-error-text"
       }`}
     >
       <span aria-hidden className="mt-px font-bold">
@@ -34,7 +34,7 @@ export function Notice({ notice }: { notice: NoticeKey }) {
         type="button"
         onClick={() => setVisible(false)}
         aria-label="Dismiss message"
-        className="-my-1 -mr-2 grid size-8 place-items-center rounded-full opacity-70 hover:opacity-100"
+        className="-my-1 -mr-2 grid size-8 cursor-pointer place-items-center rounded-full opacity-70"
       >
         ✕
       </button>

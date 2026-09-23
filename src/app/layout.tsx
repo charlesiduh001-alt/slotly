@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Inter } from "next/font/google";
+import { Cal_Sans, Inter } from "next/font/google";
 import Link from "next/link";
+import { BrandMark } from "@/components/booker";
 import { InlineScript } from "@/components/inline-script";
 import { MobileMenu, type NavLink } from "@/components/mobile-menu";
 import { MotionProvider } from "@/components/motion";
@@ -9,7 +10,8 @@ import { business, SITE_URL } from "@/lib/business";
 import "./globals.css";
 
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
-const fraunces = Fraunces({ variable: "--font-fraunces", subsets: ["latin"] });
+// Cal Sans ships a single weight, drawn as the display weight.
+const calSans = Cal_Sans({ variable: "--font-cal-sans", weight: "400", subsets: ["latin"] });
 
 const description = `Book hair, nails and grooming at ${business.name} in Lekki, Lagos. See live availability and get instant confirmation in under a minute.`;
 
@@ -30,15 +32,16 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#fbf7f2" },
-    { media: "(prefers-color-scheme: dark)", color: "#151012" },
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
   ],
 };
 
 const NAV: NavLink[] = [
   { href: "/#services", label: "Services" },
   { href: "/#how-it-works", label: "How it works" },
-  { href: "/booking", label: "My booking" },
+  { href: "/#reviews", label: "Reviews" },
+  { href: "/#visit", label: "Visit" },
 ];
 
 const telHref = `tel:${business.phone.replace(/\s/g, "")}`;
@@ -49,7 +52,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       data-theme="light"
       suppressHydrationWarning
-      className={`${inter.variable} ${fraunces.variable} h-full antialiased`}
+      className={`${inter.variable} ${calSans.variable} h-full antialiased`}
     >
       <head>
         <InlineScript html={themeScript} />
@@ -58,43 +61,49 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <MotionProvider>
           <a
             href="#main"
-            className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50 focus:rounded-lg focus:bg-surface focus:px-4 focus:py-2"
+            className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-[60] focus:rounded-md focus:bg-canvas focus:px-4 focus:py-2 focus:text-ink"
           >
             Skip to content
           </a>
-          <div className="bg-plum-900 px-4 py-1.5 text-center text-xs text-white/85">
+          <div className="border-b border-hairline-soft bg-surface-soft px-4 py-2 text-center caption text-muted">
             Demo site: {business.name} is a fictional salon showcasing{" "}
-            <a href={business.repoUrl} className="font-semibold text-white underline underline-offset-2">
+            <a href={business.repoUrl} className="font-semibold text-ink underline underline-offset-2">
               Slotly
             </a>
             . Bookings aren&apos;t real appointments.
           </div>
 
-          <header className="sticky top-0 z-40 border-b border-line/70 bg-cream/70 backdrop-blur-xl">
-            <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
-              <Link href="/" aria-label={`${business.name} home`} className="flex min-w-0 items-center gap-2 rounded-full">
-                <span
-                  aria-hidden
-                  className="grid size-8 shrink-0 place-items-center rounded-full bg-gradient-to-br from-plum-600 to-plum-900 font-display text-lg text-white shadow-md shadow-plum-600/30"
-                >
-                  G
-                </span>
-                <span className="truncate font-display text-lg font-semibold sm:text-xl">{business.name}</span>
+          <header className="sticky top-0 z-40 border-b border-hairline-soft bg-canvas">
+            <div className="container-page flex h-16 items-center justify-between gap-4">
+              <Link href="/" aria-label={`${business.name} home`} className="flex min-w-0 items-center gap-2.5 rounded-md">
+                <BrandMark />
+                <span className="truncate font-display text-[20px] tracking-[-0.3px] text-ink">{business.name}</span>
               </Link>
-              <nav aria-label="Main" className="flex shrink-0 items-center gap-2 text-sm sm:gap-3">
+
+              <nav aria-label="Main" className="hidden items-center gap-1 md:flex">
                 {NAV.map((l) => (
-                  <Link key={l.href} href={l.href} className="hidden rounded-full px-3 py-2 text-muted transition-colors hover:text-ink sm:block">
+                  <Link key={l.href} href={l.href} className="rounded-md px-3 py-2 nav-link text-ink">
                     {l.label}
                   </Link>
                 ))}
-                <div className="hidden sm:block">
+              </nav>
+
+              <div className="flex shrink-0 items-center gap-2 sm:gap-3">
+                <Link href="/booking" className="btn-text hidden px-2 md:inline-flex">
+                  My booking
+                </Link>
+                <div className="hidden md:block">
                   <ThemeToggle />
                 </div>
-                <Link href="/book" className="btn-primary px-4 whitespace-nowrap sm:px-5">
+                <Link href="/book" className="btn-primary">
                   Book now
                 </Link>
-                <MobileMenu links={[...NAV, { href: "/admin", label: "Staff login" }]} phone={business.phone} email={business.email} />
-              </nav>
+                <MobileMenu
+                  links={[...NAV, { href: "/booking", label: "My booking" }, { href: "/admin", label: "Staff login" }]}
+                  phone={business.phone}
+                  email={business.email}
+                />
+              </div>
             </div>
           </header>
 
@@ -102,81 +111,94 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             {children}
           </main>
 
-          <footer className="border-t border-line bg-sand/50">
-            <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.4fr_1fr_1fr]">
-              <div>
-                <Link href="/" className="inline-flex items-center gap-2 rounded-full">
-                  <span aria-hidden className="grid size-8 place-items-center rounded-full bg-gradient-to-br from-plum-600 to-plum-900 font-display text-lg text-white">
-                    G
-                  </span>
-                  <span className="font-display text-lg font-semibold">{business.name}</span>
-                </Link>
-                <p className="mt-3 max-w-xs text-sm text-muted">{business.tagline}. Book online any time, day or night.</p>
-                <address className="mt-4 text-sm text-muted not-italic">{business.address}</address>
-              </div>
-
-              <nav aria-label="Footer">
-                <p className="text-xs font-semibold tracking-[0.18em] text-ink uppercase">Explore</p>
-                <ul className="mt-3 space-y-1 text-sm">
-                  {[{ href: "/book", label: "Book an appointment" }, ...NAV, { href: "/admin", label: "Staff login" }].map((l) => (
-                    <li key={l.href}>
-                      <Link href={l.href} className="inline-block py-1.5 text-muted transition-colors hover:text-accent">
-                        {l.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </nav>
-
-              <div>
-                <p className="text-xs font-semibold tracking-[0.18em] text-ink uppercase">Contact</p>
-                <ul className="mt-3 space-y-1 text-sm">
-                  <li>
-                    <a href={telHref} className="inline-flex items-center gap-2 py-1.5 text-muted transition-colors hover:text-accent">
-                      <PhoneIcon /> {business.phone}
-                    </a>
-                  </li>
-                  <li>
-                    <a href={`mailto:${business.email}`} className="inline-flex items-center gap-2 py-1.5 break-all text-muted transition-colors hover:text-accent">
-                      <MailIcon /> {business.email}
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div className="border-t border-line">
-              <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-5 text-xs text-muted sm:flex-row sm:items-center sm:justify-between sm:px-6">
-                <p>
-                  © {new Date().getFullYear()} {business.name}. All rights reserved.
-                </p>
-                <p>
-                  Scheduling by{" "}
-                  <a href={business.repoUrl} className="font-semibold text-accent underline-offset-4 hover:underline">
-                    Slotly
-                  </a>
-                </p>
-              </div>
-            </div>
-          </footer>
+          <Footer />
         </MotionProvider>
       </body>
     </html>
   );
 }
 
-function PhoneIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="size-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-      <path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z" />
-    </svg>
-  );
-}
+/** Dark footer: the only dark surface, closing every page (spec: footer). */
+function Footer() {
+  const columns: { title: string; links: { href: string; label: string }[] }[] = [
+    {
+      title: "Book",
+      links: [
+        { href: "/book", label: "Book an appointment" },
+        { href: "/booking", label: "Find my booking" },
+        { href: "/#services", label: "Services & prices" },
+      ],
+    },
+    {
+      title: "Salon",
+      links: [
+        { href: "/#how-it-works", label: "How it works" },
+        { href: "/#reviews", label: "Reviews" },
+        { href: "/#visit", label: "Opening hours" },
+      ],
+    },
+    {
+      title: "Staff",
+      links: [
+        { href: "/admin", label: "Staff login" },
+        { href: business.repoUrl, label: "About Slotly" },
+      ],
+    },
+  ];
 
-function MailIcon() {
   return (
-    <svg viewBox="0 0 24 24" className="size-4 shrink-0" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
-      <rect x="2" y="4" width="20" height="16" rx="2" />
-      <path d="m22 7-10 6L2 7" />
-    </svg>
+    <footer className="bg-surface-dark text-on-dark-soft">
+      <div className="container-page grid gap-10 py-16 body-sm sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
+        <div>
+          <Link href="/" className="inline-flex items-center gap-2.5 rounded-md">
+            <span aria-hidden className="grid size-9 place-items-center rounded-full bg-on-dark font-display text-[18px] text-[#111111]">
+              {business.name[0]}
+            </span>
+            <span className="font-display text-[20px] tracking-[-0.3px] text-on-dark">{business.name}</span>
+          </Link>
+          <p className="mt-4 max-w-xs">{business.tagline}. Book online any time, day or night.</p>
+          <address className="mt-4 not-italic">{business.address}</address>
+          <ul className="mt-4 space-y-1">
+            <li>
+              <a href={telHref} className="inline-block py-1 text-on-dark">
+                {business.phone}
+              </a>
+            </li>
+            <li>
+              <a href={`mailto:${business.email}`} className="inline-block py-1 break-all text-on-dark">
+                {business.email}
+              </a>
+            </li>
+          </ul>
+        </div>
+        {columns.map((col) => (
+          <nav key={col.title} aria-label={col.title}>
+            <p className="caption text-on-dark">{col.title}</p>
+            <ul className="mt-4 space-y-1">
+              {col.links.map((l) => (
+                <li key={l.href}>
+                  <Link href={l.href} className="inline-block py-1.5 text-on-dark-soft active:text-on-dark">
+                    {l.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ))}
+      </div>
+      <div className="border-t border-surface-dark-elevated">
+        <div className="container-page flex flex-col gap-2 py-6 caption text-muted-soft sm:flex-row sm:items-center sm:justify-between">
+          <p>
+            © {new Date().getFullYear()} {business.name}. All rights reserved.
+          </p>
+          <p>
+            Scheduling by{" "}
+            <a href={business.repoUrl} className="text-on-dark-soft underline underline-offset-2">
+              Slotly
+            </a>
+          </p>
+        </div>
+      </div>
+    </footer>
   );
 }

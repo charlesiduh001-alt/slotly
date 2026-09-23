@@ -22,7 +22,7 @@ export function LoginForm() {
           aria-describedby={state.error ? "password-error" : undefined}
         />
         {state.error && (
-          <p id="password-error" role="alert" className="mt-1.5 text-sm text-danger">
+          <p id="password-error" role="alert" className="mt-1.5 body-sm text-error-text">
             {state.error}
           </p>
         )}

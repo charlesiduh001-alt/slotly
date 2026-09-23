@@ -10,23 +10,19 @@ export default function Error({ error, retry }: { error: Error & { digest?: stri
   }, [error]);
 
   return (
-    <div className="mx-auto max-w-lg px-4 py-24 text-center sm:px-6">
-      <span aria-hidden className="mx-auto grid size-16 place-items-center rounded-full bg-danger/10 text-3xl text-danger">
-        !
-      </span>
-      <h1 className="mt-5 font-display text-3xl font-semibold">Something went wrong</h1>
-      <p className="mt-3 text-muted">
-        Sorry, we couldn&apos;t load this page. Your bookings are safe. Please try again in a moment.
-      </p>
-      {error.digest && <p className="mt-2 font-mono text-xs text-muted">Error reference: {error.digest}</p>}
+    <section className="container-page section text-center">
+      <span className="badge bg-error/10 text-error-text">Something went wrong</span>
+      <h1 className="mt-5 display-xs sm:display-md">We couldn&apos;t load this page</h1>
+      <p className="mx-auto mt-4 max-w-md body-md text-muted">Your bookings are safe. Please try again in a moment.</p>
+      {error.digest && <p className="mt-2 font-mono caption text-muted">Error reference: {error.digest}</p>}
       <div className="mt-8 flex flex-wrap justify-center gap-3">
-        <button type="button" onClick={() => retry()} className="btn-primary px-6 py-3">
+        <button type="button" onClick={() => retry()} className="btn-primary">
           Try again
         </button>
-        <Link href="/" className="btn-secondary px-6 py-3">
+        <Link href="/" className="btn-secondary">
           Back to home
         </Link>
       </div>
-    </div>
+    </section>
   );
 }

@@ -14,11 +14,11 @@ export default function AppleIcon() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "linear-gradient(135deg, #8f3f7c, #2e1128)",
+          background: "#111111",
           color: "white",
-          fontSize: 110,
-          fontFamily: "serif",
+          fontSize: 104,
           fontWeight: 600,
+          letterSpacing: -4,
         }}
       >
         G

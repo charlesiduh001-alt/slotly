@@ -3,7 +3,8 @@
 import confetti from "canvas-confetti";
 import { useEffect } from "react";
 
-const COLORS = ["#6b2d5e", "#a0508e", "#e0a9d2", "#c8963e", "#f1e8dd"];
+// Spec badge pastels plus ink: a small chromatic flourish on a monochrome page.
+const COLORS = ["#111111", "#fb923c", "#ec4899", "#8b5cf6", "#34d399"];
 
 /** One celebratory burst from both sides; skipped when "reduce motion" is on. */
 export function Confetti() {
