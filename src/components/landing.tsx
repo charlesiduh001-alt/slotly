@@ -252,7 +252,7 @@ export function Testimonials({ items }: { items: Testimonial[] }) {
             onClick={() => setIndex(i)}
             aria-label={`Show review ${i + 1} of ${items.length}`}
             aria-current={i === index}
-            className="grid h-6 place-items-center px-1"
+            className="grid size-8 place-items-center"
           >
             <span
               className={`block h-1.5 rounded-full transition-all duration-300 ${

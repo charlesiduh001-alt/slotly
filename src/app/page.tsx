@@ -166,7 +166,7 @@ export default async function Home() {
       </section>
 
       {/* How it works */}
-      <section className="relative overflow-hidden border-y border-line bg-sand/40">
+      <section id="how-it-works" className="relative scroll-mt-20 overflow-hidden border-y border-line bg-sand/40">
         <div className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
           <Reveal>
             <p className="eyebrow">How it works</p>
@@ -214,8 +214,15 @@ export default async function Home() {
               <div className="relative">
                 <p className="text-xs font-semibold tracking-[0.18em] text-white/70 uppercase">Visit us</p>
                 <h2 className="mt-2 font-display text-2xl font-semibold">{business.name}</h2>
-                <p className="mt-4 text-white/80">{business.address}</p>
-                <p className="mt-1 text-white/80">{business.phone}</p>
+                <address className="mt-4 text-white/80 not-italic">{business.address}</address>
+                <div className="mt-2 flex flex-col items-start text-white/90">
+                  <a href={`tel:${business.phone.replace(/\s/g, "")}`} className="py-1.5 underline-offset-4 hover:underline">
+                    {business.phone}
+                  </a>
+                  <a href={`mailto:${business.email}`} className="py-1.5 break-all underline-offset-4 hover:underline">
+                    {business.email}
+                  </a>
+                </div>
                 <p className="mt-8 max-w-sm font-display text-3xl leading-tight font-semibold">Ready for a fresh look?</p>
                 <Link
                   href="/book"

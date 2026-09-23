@@ -8,7 +8,7 @@ The demo is set up for **Glow Studio**, a fictional salon in Lagos.
 
 [![CI](https://github.com/charlesiduh001-alt/slotly/actions/workflows/ci.yml/badge.svg)](https://github.com/charlesiduh001-alt/slotly/actions/workflows/ci.yml)
 
-![Slotly home page with live "next available" times](docs/screenshots/home.png)
+![Slotly home page with live "next available" times](docs/screenshots/home.webp)
 
 ## Screenshots
 
@@ -16,30 +16,30 @@ The demo is set up for **Glow Studio**, a fictional salon in Lagos.
 
 | Choose a time | Your details |
 | --- | --- |
-| ![Date and time picker showing available slots](docs/screenshots/choose-time.png) | ![Details form with booking summary](docs/screenshots/details.png) |
+| ![Date and time picker showing available slots](docs/screenshots/choose-time.webp) | ![Details form with booking summary](docs/screenshots/details.webp) |
 
 | Confirmation | Staff dashboard |
 | --- | --- |
-| ![Booking confirmation with reference number](docs/screenshots/confirmation.png) | ![Admin schedule with daily stats and bookings table](docs/screenshots/admin-dashboard.png) |
+| ![Booking confirmation with reference number](docs/screenshots/confirmation.webp) | ![Admin schedule with daily stats and bookings table](docs/screenshots/admin-dashboard.webp) |
 
 **Dark mode:** follows the system setting, with a toggle that remembers your choice
 
 | Home | Services |
 | --- | --- |
-| ![Home page in dark mode](docs/screenshots/home-dark.png) | ![Service cards in dark mode](docs/screenshots/services-dark.png) |
+| ![Home page in dark mode](docs/screenshots/home-dark.webp) | ![Service cards in dark mode](docs/screenshots/services-dark.webp) |
 
 **On mobile**
 
 <p>
-  <img src="docs/screenshots/mobile-home.png" alt="Home page on a phone" width="260">
+  <img src="docs/screenshots/mobile-home.webp" alt="Home page on a phone" width="260">
   &nbsp;&nbsp;
-  <img src="docs/screenshots/mobile-booking.png" alt="Booking time picker on a phone" width="260">
+  <img src="docs/screenshots/mobile-booking.webp" alt="Booking time picker on a phone" width="260">
 </p>
 
 <details>
 <summary>Admin: managing services</summary>
 
-![Admin services list with add-service form](docs/screenshots/admin-services.png)
+![Admin services list with add-service form](docs/screenshots/admin-services.webp)
 
 </details>
 
@@ -59,6 +59,9 @@ The demo is set up for **Glow Studio**, a fictional salon in Lagos.
 - Date picker whose highlight slides instantly (optimistic UI) while times load; slots cascade in
 - Micro-interactions: pressable buttons, shake on invalid input, page fade transitions
 - Every animation respects the OS "reduce motion" setting
+- Mobile menu, clickable phone and email, and 16px form fields so iPhones don't zoom in
+- Clear success and error messages for every action, a custom 404 page and a friendly error page
+- Unique page titles and descriptions, a branded favicon and iOS icon, and a generated social share image
 
 **Staff (`/admin`)**
 - Day-by-day schedule with expected revenue and hours booked
@@ -112,7 +115,8 @@ Open http://localhost:3000. The staff dashboard is at `/admin`.
 | `npm run db:push` | Apply the schema to the database |
 | `npm run db:seed` | Reset and seed demo data |
 | `npm run db:studio` | Browse the database in Drizzle Studio |
-| `npm run screenshots` | Regenerate README screenshots (needs `db:seed -- --with-bookings` and a running dev server) |
+| `npm run screenshots` | Regenerate README screenshots (needs `db:seed -- --with-bookings` and a running dev server), then `npm run images:compress` to convert them to WebP |
+| `npm run audit` | Crawl the site on phone and desktop widths: broken links, overflow, titles, descriptions, tap targets, console errors |
 
 ## Deployment (Vercel + Turso)
 

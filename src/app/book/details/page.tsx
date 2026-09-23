@@ -6,7 +6,11 @@ import { formatDuration, formatPrice } from "@/lib/format";
 import { getAvailableSlots, getService } from "@/lib/queries";
 import { formatDate, formatMinutes, isValidDateString } from "@/lib/time";
 
-export const metadata: Metadata = { title: "Your details" };
+export const metadata: Metadata = {
+  title: "Your details",
+  description: "Add your name and contact details to confirm your appointment.",
+  robots: { index: false },
+};
 
 export default async function DetailsPage({ searchParams }: PageProps<"/book/details">) {
   const sp = await searchParams;
@@ -67,7 +71,7 @@ export default async function DetailsPage({ searchParams }: PageProps<"/book/det
         </dl>
         <Link
           href={`/book?service=${service.id}&date=${date}`}
-          className="mt-5 inline-block text-sm font-medium text-accent underline-offset-4 hover:underline"
+          className="mt-4 inline-flex items-center py-2 text-sm font-medium text-accent underline-offset-4 hover:underline"
         >
           ← Change time
         </Link>

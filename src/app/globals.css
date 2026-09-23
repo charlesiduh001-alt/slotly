@@ -142,7 +142,7 @@ body {
   @apply border border-line/70 bg-surface/70 backdrop-blur-xl;
 }
 @utility input {
-  @apply w-full rounded-xl border border-line bg-surface px-4 py-2.5 text-sm text-ink transition-[border-color,box-shadow] placeholder:text-muted/70 focus:border-accent focus:ring-4 focus:ring-plum-100 focus:outline-none aria-invalid:animate-shake aria-invalid:border-danger;
+  @apply w-full rounded-xl border border-line bg-surface px-4 py-3 text-base text-ink sm:py-2.5 sm:text-sm transition-[border-color,box-shadow] placeholder:text-muted/70 focus:border-accent focus:ring-4 focus:ring-plum-100 focus:outline-none aria-invalid:animate-shake aria-invalid:border-danger;
 }
 @utility label {
   @apply mb-1.5 block text-sm font-medium text-ink;

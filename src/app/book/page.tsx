@@ -13,7 +13,21 @@ import {
 } from "@/lib/queries";
 import { dayOfWeek, formatDate, formatMinutes } from "@/lib/time";
 
-export const metadata: Metadata = { title: "Book an appointment" };
+export async function generateMetadata({ searchParams }: PageProps<"/book">): Promise<Metadata> {
+  const id = Number(param((await searchParams).service));
+  const service = Number.isInteger(id) ? await getService(id) : null;
+  if (!service?.active) {
+    return {
+      title: "Book an appointment",
+      description: "Choose a service to see live availability and book online in under a minute.",
+    };
+  }
+  const price = service.priceKobo ? formatPrice(service.priceKobo) : "Free";
+  return {
+    title: `Book ${service.name}`,
+    description: `${service.name}: ${formatDuration(service.durationMin)}, ${price}. Pick a free time and get instant confirmation.`,
+  };
+}
 
 function param(value: string | string[] | undefined): string | undefined {
   return Array.isArray(value) ? value[0] : value;

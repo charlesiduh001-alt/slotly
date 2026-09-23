@@ -1,12 +1,18 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { adminSetBookingStatus } from "@/app/actions";
+import { Notice } from "@/components/notice";
+import { isNoticeKey } from "@/lib/notices";
 import { requireAdmin } from "@/lib/auth";
 import { formatPrice } from "@/lib/format";
 import { getBookingsForDate } from "@/lib/queries";
 import { addDays, formatDate, formatMinutes, isValidDateString, nowInBusinessTz } from "@/lib/time";
 
-export const metadata: Metadata = { title: "Bookings", robots: { index: false } };
+export const metadata: Metadata = {
+  title: "Bookings dashboard",
+  description: "Daily schedule, expected revenue and booking management for staff.",
+  robots: { index: false, follow: false },
+};
 
 export default async function AdminBookingsPage({ searchParams }: PageProps<"/admin">) {
   await requireAdmin();
@@ -21,12 +27,17 @@ export default async function AdminBookingsPage({ searchParams }: PageProps<"/ad
 
   return (
     <div className="py-8">
+      {isNoticeKey(sp.notice) && (
+        <div className="mb-6">
+          <Notice notice={sp.notice} />
+        </div>
+      )}
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="eyebrow">{date === today ? "Today" : "Schedule"}</p>
           <h1 className="mt-1 font-display text-3xl font-semibold">{formatDate(date)}</h1>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
           <Link href={`/admin?date=${addDays(date, -1)}`} className="btn-secondary px-3 py-2" aria-label="Previous day">
             ←
           </Link>
@@ -38,11 +49,11 @@ export default async function AdminBookingsPage({ searchParams }: PageProps<"/ad
           <Link href={`/admin?date=${addDays(date, 1)}`} className="btn-secondary px-3 py-2" aria-label="Next day">
             →
           </Link>
-          <form action="/admin" className="ml-2 flex gap-2">
+          <form action="/admin" className="flex w-full gap-2 sm:ml-2 sm:w-auto">
             <label htmlFor="date" className="sr-only">
               Jump to date
             </label>
-            <input id="date" type="date" name="date" defaultValue={date} className="input py-2" />
+            <input id="date" type="date" name="date" defaultValue={date} className="input min-w-0 flex-1 py-2 sm:flex-none" />
             <button className="btn-secondary px-4 py-2">Go</button>
           </form>
         </div>
@@ -84,7 +95,7 @@ export default async function AdminBookingsPage({ searchParams }: PageProps<"/ad
                       <td className="px-5 py-4">
                         <p className="font-medium">{b.customerName}</p>
                         <p className="text-xs text-muted">
-                          <a href={`tel:${b.customerPhone}`} className="hover:underline">{b.customerPhone}</a>
+                          <a href={`tel:${b.customerPhone.replace(/[^+0-9]/g, "")}`} className="hover:underline">{b.customerPhone}</a>
                           {" · "}
                           <a href={`mailto:${b.customerEmail}`} className="hover:underline">{b.customerEmail}</a>
                         </p>

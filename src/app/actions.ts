@@ -8,7 +8,7 @@ import { z } from "zod";
 import { db } from "@/db";
 import { bookings, services } from "@/db/schema";
 import { checkPassword, createSession, destroySession, requireAdmin } from "@/lib/auth";
-import { getAvailableSlots } from "@/lib/queries";
+import { getAvailableSlots, getBookingByReference } from "@/lib/queries";
 import { isValidDateString, overlaps } from "@/lib/time";
 
 export type BookingFormState = {
@@ -141,6 +141,10 @@ export async function findBooking(formData: FormData): Promise<void> {
     .toUpperCase()
     .replace(/[^A-Z0-9-]/g, "");
   const normalised = reference.startsWith("SL-") ? reference : `SL-${reference}`;
+  // Stay on the lookup form with a clear message rather than showing a 404.
+  if (!/^SL-[A-Z0-9]{6}$/.test(normalised) || !(await getBookingByReference(normalised))) {
+    redirect("/booking?notice=not-found");
+  }
   redirect(`/booking/${normalised}`);
 }
 
@@ -157,7 +161,7 @@ export async function login(_prev: LoginState, formData: FormData): Promise<Logi
 
 export async function logout(): Promise<void> {
   await destroySession();
-  redirect("/admin/login");
+  redirect("/admin/login?notice=logged-out");
 }
 
 export async function adminSetBookingStatus(formData: FormData): Promise<void> {
@@ -166,19 +170,24 @@ export async function adminSetBookingStatus(formData: FormData): Promise<void> {
   const status = formData.get("status") === "cancelled" ? "cancelled" : "confirmed";
   if (!Number.isInteger(id)) return;
 
+  const [target] = await db.select().from(bookings).where(eq(bookings.id, id));
+  if (!target) redirect("/admin");
+  const back = `/admin?date=${target.date}`;
+
   if (status === "confirmed") {
     // Don't let a restore create a double-booking.
-    const [target] = await db.select().from(bookings).where(eq(bookings.id, id));
-    if (!target) return;
     const sameDay = await db
       .select()
       .from(bookings)
       .where(and(eq(bookings.date, target.date), eq(bookings.status, "confirmed")));
-    if (sameDay.some((b) => b.id !== id && overlaps(b, target))) return;
+    if (sameDay.some((b) => b.id !== id && overlaps(b, target))) {
+      redirect(`${back}&notice=restore-conflict`);
+    }
   }
 
   await db.update(bookings).set({ status }).where(eq(bookings.id, id));
   revalidatePath("/admin");
+  redirect(`${back}&notice=${status === "cancelled" ? "cancelled" : "restored"}`);
 }
 
 export async function adminToggleService(formData: FormData): Promise<void> {
@@ -189,6 +198,7 @@ export async function adminToggleService(formData: FormData): Promise<void> {
   await db.update(services).set({ active }).where(eq(services.id, id));
   revalidatePath("/admin/services");
   revalidatePath("/");
+  redirect(`/admin/services?notice=${active ? "service-shown" : "service-hidden"}`);
 }
 
 const serviceSchema = z.object({

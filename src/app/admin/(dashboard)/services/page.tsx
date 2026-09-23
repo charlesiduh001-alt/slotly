@@ -1,19 +1,31 @@
 import type { Metadata } from "next";
 import { adminToggleService } from "@/app/actions";
 import { ServiceForm } from "@/components/service-form";
+import { Notice } from "@/components/notice";
+import { isNoticeKey } from "@/lib/notices";
 import { requireAdmin } from "@/lib/auth";
 import { formatDuration, formatPrice } from "@/lib/format";
 import { getAllServices } from "@/lib/queries";
 
-export const metadata: Metadata = { title: "Services", robots: { index: false } };
+export const metadata: Metadata = {
+  title: "Manage services",
+  description: "Add services and choose which ones customers can book.",
+  robots: { index: false, follow: false },
+};
 
-export default async function AdminServicesPage() {
+export default async function AdminServicesPage({ searchParams }: PageProps<"/admin/services">) {
   await requireAdmin();
+  const { notice } = await searchParams;
   const services = await getAllServices();
 
   return (
     <div className="grid gap-8 py-8 lg:grid-cols-[1fr_340px]">
       <div>
+        {isNoticeKey(notice) && (
+          <div className="mb-6">
+            <Notice notice={notice} />
+          </div>
+        )}
         <h1 className="font-display text-3xl font-semibold">Services</h1>
         <p className="mt-1 text-sm text-muted">Hidden services can&apos;t be booked but keep their history.</p>
         <ul className="card mt-6 divide-y divide-line">

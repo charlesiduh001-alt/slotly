@@ -9,7 +9,14 @@ import { formatDuration, formatPrice } from "@/lib/format";
 import { getBookingByReference } from "@/lib/queries";
 import { formatDate, formatMinutes, nowInBusinessTz } from "@/lib/time";
 
-export const metadata: Metadata = { title: "Your booking", robots: { index: false } };
+export async function generateMetadata({ params }: PageProps<"/booking/[reference]">): Promise<Metadata> {
+  const { reference } = await params;
+  return {
+    title: `Booking ${reference.toUpperCase()}`,
+    description: "Your appointment details, calendar links and cancellation options.",
+    robots: { index: false, follow: false },
+  };
+}
 
 export default async function BookingPage({ params, searchParams }: PageProps<"/booking/[reference]">) {
   const { reference } = await params;

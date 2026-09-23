@@ -14,7 +14,9 @@
     "typecheck": "tsc --noEmit",
     "db:push:prod": "node --env-file=.env.production.local node_modules/drizzle-kit/bin.cjs push",
     "db:seed:prod": "tsx --env-file=.env.production.local scripts/seed.ts",
-    "screenshots": "tsx --env-file-if-exists=.env.local scripts/screenshots.ts"
+    "screenshots": "tsx --env-file-if-exists=.env.local scripts/screenshots.ts",
+    "audit": "tsx --env-file-if-exists=.env.local scripts/audit.ts",
+    "images:compress": "tsx scripts/compress-images.ts"
   },
   "dependencies": {
     "@libsql/client": "^0.18.0",
