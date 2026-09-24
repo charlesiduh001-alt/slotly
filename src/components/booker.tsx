@@ -53,8 +53,14 @@ export function EventDetails({
         )}
         <DetailRow icon="clock">{formatDuration(service.durationMin)}</DetailRow>
         <DetailRow icon="price">
-          {service.priceKobo ? formatPrice(service.priceKobo) : "Free"}
-          <span className="text-muted"> · pay at the studio</span>
+          {service.priceKobo ? (
+            <>
+              {formatPrice(service.priceKobo)}
+              <span className="text-muted"> · pay at the studio</span>
+            </>
+          ) : (
+            "Free"
+          )}
         </DetailRow>
         <DetailRow icon="pin">{business.address}</DetailRow>
       </ul>

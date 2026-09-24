@@ -119,7 +119,9 @@ export default async function BookingPage({ params, searchParams }: PageProps<"/
               </Detail>
               <Detail icon="price" label="Payment">
                 {service.priceKobo ? formatPrice(service.priceKobo) : "Free"}
-                <span className="block font-normal text-body">Pay at the studio</span>
+                <span className="block font-normal text-body">
+                  {service.priceKobo ? "Pay at the studio" : "No payment needed"}
+                </span>
               </Detail>
               <Detail icon="user" label="Booked for">
                 {booking.customerName}
