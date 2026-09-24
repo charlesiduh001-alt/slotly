@@ -90,10 +90,14 @@ export default async function Home() {
             </div>
           </div>
 
-          <div className="animate-rise [animation-delay:0.3s] lg:col-span-5">
-            <Suspense fallback={<BookerSkeleton />}>
-              <HeroBooker />
-            </Suspense>
+          <div className="relative animate-rise [animation-delay:0.3s] lg:col-span-5">
+            {/* Adire cloth under the widget: the brand's signature surface */}
+            <div aria-hidden className="adire absolute top-6 -right-3 -bottom-3 left-6 rounded-xl sm:top-10 sm:-right-5 sm:-bottom-5 sm:left-10" />
+            <div className="relative">
+              <Suspense fallback={<BookerSkeleton />}>
+                <HeroBooker />
+              </Suspense>
+            </div>
           </div>
         </div>
 
@@ -228,12 +232,15 @@ export default async function Home() {
       <section className="section">
         <div className="container-page">
           <Reveal>
-            <div className="rounded-lg bg-surface-card px-6 py-12 text-center md:p-12">
-              <h2 className="display-sm">Ready for a fresh look?</h2>
-              <p className="mx-auto mt-3 max-w-md body-md text-body">Book online any time, day or night. It takes less than a minute.</p>
-              <Link href="/book" className="btn-primary mt-8">
-                Book an appointment
-              </Link>
+            <div className="adire overflow-hidden rounded-lg p-3 md:p-0">
+              {/* Solid inner panel keeps the text on plain indigo, off the pattern */}
+              <div className="mx-auto max-w-xl rounded-md bg-indigo px-6 py-12 text-center md:my-12 md:rounded-lg md:px-12">
+                <h2 className="display-sm text-white!">Ready for a fresh look?</h2>
+                <p className="mx-auto mt-3 max-w-md body-md text-[#d6ddf5]">Book online any time, day or night. It takes less than a minute.</p>
+                <Link href="/book" className="btn mt-8 bg-white text-[#111111] active:bg-[#e5e7eb]">
+                  Book an appointment
+                </Link>
+              </div>
             </div>
           </Reveal>
         </div>

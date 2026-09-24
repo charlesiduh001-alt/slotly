@@ -55,6 +55,7 @@ The demo is set up for **Glow Studio**, a fictional salon in Lagos.
 
 **Design & interaction**
 - Visual system follows a Cal.com-style design spec ([docs/design-spec.md](docs/design-spec.md)): monochrome canvas, near-black CTAs, Cal Sans display type with Inter body, 8/12/16px radius scale, light-grey cards and a dark footer
+- **Adire brand motif:** an indigo pattern inspired by Yoruba adire cloth (tie-dye rings, starch-resist dots and stitched lines in a square grid), used as a signature surface behind the hero widget, in the CTA band, the footer strip and the confirmation card
 - Booking widget with a real **month calendar** (available days on grey tiles, selected day solid, today marked) beside the day's time slots; selection updates instantly (optimistic UI)
 - Live booking widget in the hero, pill-in-pill tab switcher for "How it works", testimonial cards with pastel avatars and star ratings
 - Light and dark themes with no flash on load; text colours checked to WCAG AA

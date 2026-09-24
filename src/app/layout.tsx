@@ -148,6 +148,7 @@ function Footer() {
 
   return (
     <footer className="bg-surface-dark text-on-dark-soft">
+      <div aria-hidden className="adire-sm h-8" />
       <div className="container-page grid gap-10 py-16 body-sm sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
         <div>
           <Link href="/" className="inline-flex items-center gap-2.5 rounded-md">

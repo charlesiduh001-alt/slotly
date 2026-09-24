@@ -70,7 +70,9 @@ export default async function BookingPage({ params, searchParams }: PageProps<"/
           </p>
         )}
 
-        <div className="mockup-card animate-rise p-6 md:p-10">
+        <div className="mockup-card animate-rise overflow-hidden">
+          <div aria-hidden className="adire-sm h-3" />
+          <div className="p-6 md:p-10">
           <div className="text-center">
             <span
               aria-hidden
@@ -162,6 +164,7 @@ export default async function BookingPage({ params, searchParams }: PageProps<"/
               </form>
             </details>
           )}
+          </div>
         </div>
 
         <div className="mt-6 flex flex-wrap justify-center gap-3">

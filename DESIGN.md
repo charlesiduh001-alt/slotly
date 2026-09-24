@@ -399,6 +399,36 @@ Utilities mirror the spec's scale: `display-xl` (64px, -2px tracking) down to `d
 - **Dark mode.** The spec is light-only. Slotly keeps an optional dark theme built from the spec's own dark surface tokens, with the primary colour inverted to white.
 - **Avatar initials** are `#111111` rather than white, because white fails contrast on the pastel fills.
 
+### Brand extension: the adire motif
+
+The Cal-style foundation gives Slotly its structure and polish. The **adire motif** is what makes it Glow Studio's own, and it's a deliberate addition beyond the spec.
+
+**Origin.** Adire is the indigo resist-dyed cloth made by Yoruba women dyers in south-west Nigeria, most famously in Abeokuta. Cloths are typically laid out as a grid of squares, each carrying a motif, made with three main techniques: *eleko* (motifs painted in a starch resist), *oniko* (tie-dye, giving rings and circles) and *alabere* (hand-stitched resist lines).
+
+**The tile.** A 64px SVG tile (`scripts/adire.ts`) keeps the square grid and places one reference to each technique in its quarters:
+
+| Quarter | Technique | Motif |
+| --- | --- | --- |
+| Top left | Oniko | Concentric rings around a dot |
+| Top right | Eleko | A 3×3 cluster of starch-resist dots |
+| Bottom left | Alabere | Dashed diagonal stitch lines |
+| Bottom right | Eleko | A four-petal leaf around a centre dot |
+
+It's drawn in lighter indigo (`#3d5299`) on deep indigo (`#1b2a5e`, the `indigo` token), and generated into two CSS utilities, `adire` (64px) and `adire-sm` (32px), as inline SVG data, with no image requests. The script is the source of truth; its output is pasted into `globals.css`.
+
+**Where it appears.** It's a signature, so it's used sparingly, in four places only:
+
+1. **Hero:** an adire "cloth" panel offset behind the live booking widget.
+2. **CTA band:** an adire frame around a solid indigo panel.
+3. **Footer:** a 32px adire strip where the page turns dark.
+4. **Confirmation card:** a thin adire ribbon along the top.
+
+**Rules.**
+- **Never behind text.** Text always sits on solid indigo (white is 13.6:1, `#d6ddf5` is 10.1:1).
+- **The pattern is deliberately low-contrast** (1.9:1 against its background) so it reads as texture, and it's marked `aria-hidden`.
+- **Buttons stay black** (or white on indigo). Indigo is a surface colour, not an action colour, which keeps the spec's monochrome action layer intact.
+- This is the one intentional exception to the spec's "dark surfaces only in the footer" rule. The indigo surfaces carry the brand, and they're limited to the four uses above.
+
 ### Themes
 
 A tiny inline script in `<head>` sets `data-theme` before the first paint, from the saved choice or else the OS preference, so there's no flash. The server renders a default, and `suppressHydrationWarning` lets the script's change stand. Switching theme only swaps the CSS variables.
