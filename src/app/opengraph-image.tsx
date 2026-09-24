@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { logoDataUri } from "@/components/logo";
 import { business } from "@/lib/business";
 
 // Preview card shown when the site is shared (WhatsApp, LinkedIn, X, Slack…).
@@ -9,27 +10,14 @@ export const contentType = "image/png";
 export default function OpengraphImage() {
   const slots = ["9:00 AM", "10:30 AM", "12:00 PM", "2:30 PM"];
   // A two-week strip of the calendar grid; filled tiles are "available".
-  const days = Array.from({ length: 14 }, (_, i) => ({ n: 21 + i, available: ![0, 6, 7, 13].includes(i) }));
+  const days = Array.from({ length: 14 }, (_, i) => ({ n: ((20 + i) % 30) + 1, available: ![0, 6, 7, 13].includes(i) }));
   return new ImageResponse(
     (
       <div style={{ width: "100%", height: "100%", display: "flex", padding: 72, background: "#ffffff", color: "#111111" }}>
         <div style={{ display: "flex", flexDirection: "column", flex: 1, justifyContent: "space-between", paddingRight: 48 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-            <div
-              style={{
-                width: 56,
-                height: 56,
-                borderRadius: 28,
-                background: "#111111",
-                color: "white",
-                fontSize: 32,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              G
-            </div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={logoDataUri()} width={56} height={56} alt="" />
             <div style={{ fontSize: 34, fontWeight: 600, letterSpacing: -1 }}>{business.name}</div>
           </div>
           <div style={{ fontSize: 68, fontWeight: 600, lineHeight: 1.05, letterSpacing: -2.5, display: "flex" }}>
@@ -65,7 +53,7 @@ export default function OpengraphImage() {
                   justifyContent: "center",
                   fontSize: 18,
                   fontWeight: d.available ? 600 : 400,
-                  background: d.n === 24 ? "#111111" : d.available ? "#f5f5f5" : "white",
+                  background: d.n === 24 ? "#1b2a5e" : d.available ? "#f5f5f5" : "white",
                   color: d.n === 24 ? "white" : d.available ? "#111111" : "#898989",
                 }}
               >

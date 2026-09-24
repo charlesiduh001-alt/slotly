@@ -432,6 +432,17 @@ It's drawn in lighter indigo (`#3d5299`) on deep indigo (`#1b2a5e`, the `indigo`
 - **Buttons stay black** (or white on indigo). Indigo is a surface colour, not an action colour, which keeps the spec's monochrome action layer intact.
 - This is the one intentional exception to the spec's "dark surfaces only in the footer" rule. The indigo surfaces carry the brand, and they're limited to the four uses above.
 
+### Logo
+
+The Glow Studio mark (`src/components/logo.tsx`) is built from the same adire vocabulary as the pattern, so the logo and the motif read as one brand:
+
+- **Shape:** a rounded square, like a single tile from the adire grid (16px radius on a 64px box, matching the spec's `rounded.xl`).
+- **Oniko ring:** a thin tie-dye circle framing the centre.
+- **Eleko leaf:** the pattern's four-petal leaf, which also reads as a bloom or "glow", with an indigo dot at its centre.
+- **Wordmark:** "Glow Studio" set in Cal Sans beside the mark.
+
+Several variants were rendered at 128, 32 and 16px before choosing. Versions with corner dots turned to noise at favicon size, while the ring-and-leaf version stays legible. The React component takes its fill from `--c-accent-fill`, so it's deep indigo in light mode and brighter indigo in dark mode. The always-dark footer uses the brighter shade. One `logoSvg()` function produces the favicon (`icon.svg`), the iOS home-screen icon (square corners, since iOS applies its own mask) and the mark in the social share image, so every copy of the logo is identical.
+
 ### Themes
 
 A tiny inline script in `<head>` sets `data-theme` before the first paint, from the saved choice or else the OS preference, so there's no flash. The server renders a default, and `suppressHydrationWarning` lets the script's change stand. Switching theme only swaps the CSS variables.

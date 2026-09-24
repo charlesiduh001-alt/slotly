@@ -1,4 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <circle cx="32" cy="32" r="32" fill="#111111"/>
-  <text x="32" y="44" text-anchor="middle" font-family="'Cal Sans', Inter, 'Segoe UI', Arial, sans-serif" font-size="34" font-weight="600" fill="#ffffff">G</text>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64"><rect width="64" height="64" rx="16" fill="#1b2a5e"/><circle cx="32" cy="32" r="24" fill="none" stroke="#3d5299" stroke-width="2"/><path d="M32 30C25 24.6 25.4 15.2 32 11C38.6 15.2 39 24.6 32 30Z" fill="#ffffff" transform="rotate(0 32 32)"/><path d="M32 30C25 24.6 25.4 15.2 32 11C38.6 15.2 39 24.6 32 30Z" fill="#ffffff" transform="rotate(90 32 32)"/><path d="M32 30C25 24.6 25.4 15.2 32 11C38.6 15.2 39 24.6 32 30Z" fill="#ffffff" transform="rotate(180 32 32)"/><path d="M32 30C25 24.6 25.4 15.2 32 11C38.6 15.2 39 24.6 32 30Z" fill="#ffffff" transform="rotate(270 32 32)"/><circle cx="32" cy="32" r="2.6" fill="#1b2a5e"/></svg>

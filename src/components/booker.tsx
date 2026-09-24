@@ -1,19 +1,11 @@
+import { LogoMark } from "@/components/logo";
 import { business } from "@/lib/business";
 import { formatDuration, formatPrice } from "@/lib/format";
 import { formatDate, formatMinutes } from "@/lib/time";
 
-/** Business mark: solid circle with the initial (inverts in dark mode). */
+/** Business mark: the adire-inspired Glow Studio logo. */
 export function BrandMark({ size = "md" }: { size?: "sm" | "md" }) {
-  return (
-    <span
-      aria-hidden
-      className={`grid shrink-0 place-items-center rounded-full bg-primary font-display text-on-primary ${
-        size === "sm" ? "size-7 text-[15px]" : "size-9 text-[18px]"
-      }`}
-    >
-      {business.name[0]}
-    </span>
-  );
+  return <LogoMark size={size === "sm" ? 28 : 36} />;
 }
 
 type ServiceSummary = { name: string; description?: string; durationMin: number; priceKobo: number };

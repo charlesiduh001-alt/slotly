@@ -3,6 +3,7 @@ import { Cal_Sans, Inter } from "next/font/google";
 import Link from "next/link";
 import { BrandMark } from "@/components/booker";
 import { InlineScript } from "@/components/inline-script";
+import { LogoMark } from "@/components/logo";
 import { MobileMenu, type NavLink } from "@/components/mobile-menu";
 import { MotionProvider } from "@/components/motion";
 import { ThemeToggle, themeScript } from "@/components/theme-toggle";
@@ -152,9 +153,7 @@ function Footer() {
       <div className="container-page grid gap-10 py-16 body-sm sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
         <div>
           <Link href="/" className="inline-flex items-center gap-2.5 rounded-md">
-            <span aria-hidden className="grid size-9 place-items-center rounded-full bg-on-dark font-display text-[18px] text-[#111111]">
-              {business.name[0]}
-            </span>
+            <LogoMark tone="footer" />
             <span className="font-display text-[20px] tracking-[-0.3px] text-on-dark">{business.name}</span>
           </Link>
           <p className="mt-4 max-w-xs">{business.tagline}. Book online any time, day or night.</p>
