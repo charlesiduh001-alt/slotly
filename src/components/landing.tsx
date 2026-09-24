@@ -43,7 +43,7 @@ export function BookingDemo() {
               onClick={() => setStep(i)}
               className={i === step ? "pill-tab-active" : "pill-tab"}
             >
-              <span className="mr-1.5 text-muted-soft tabular-nums">{i + 1}</span>
+              <span className={`mr-1.5 tabular-nums ${i === step ? "text-accent" : "text-muted-soft"}`}>{i + 1}</span>
               {s.tab}
             </button>
           ))}
@@ -99,7 +99,7 @@ function DemoServices() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.05 * i }}
           className={`flex items-center justify-between rounded-md border px-3 py-2.5 text-[13px] ${
-            i === 0 ? "border-ink" : "border-hairline"
+            i === 0 ? "border-accent bg-accent-fill/5" : "border-hairline"
           }`}
         >
           <span className="font-semibold text-ink">{name}</span>
@@ -127,7 +127,7 @@ function DemoTimes() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.03 * i }}
             className={`rounded-md border py-2 text-center text-[12px] font-semibold ${
-              i === 4 ? "border-primary bg-primary text-on-primary" : "border-hairline text-ink"
+              i === 4 ? "border-accent-fill bg-accent-fill text-white" : "border-hairline text-ink"
             }`}
           >
             {t}

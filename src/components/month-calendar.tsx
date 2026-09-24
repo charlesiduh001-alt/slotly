@@ -90,7 +90,7 @@ export function MonthCalendar({
           const dot = isToday && (
             <span
               aria-hidden
-              className={`absolute bottom-1 left-1/2 size-1 -translate-x-1/2 rounded-full ${isActive ? "bg-on-primary" : "bg-ink"}`}
+              className={`absolute bottom-1 left-1/2 size-1 -translate-x-1/2 rounded-full ${isActive ? "bg-white" : "bg-accent"}`}
             />
           );
 
@@ -112,7 +112,7 @@ export function MonthCalendar({
                 aria-current={date === selected ? "date" : undefined}
                 aria-label={`${label}, available`}
                 className={`${base} font-semibold transition-colors ${
-                  isActive ? "bg-primary text-on-primary" : "bg-surface-card text-ink active:bg-surface-strong"
+                  isActive ? "bg-accent-fill text-white" : "bg-surface-card text-ink active:bg-surface-strong"
                 }`}
               >
                 {day}

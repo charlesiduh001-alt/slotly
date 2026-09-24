@@ -27,7 +27,9 @@
   --c-surface-dark-elevated: #1a1a1a;
   --c-on-dark: #ffffff;
   --c-on-dark-soft: #a1a1aa;
-  --c-accent: #3b82f6;
+  /* Brand accent: adire indigo (replaces the spec's blue in the same role). */
+  --c-accent: #1b2a5e;
+  --c-accent-fill: #1b2a5e;
   --c-success: #10b981;
   --c-warning: #f59e0b;
   --c-error: #ef4444;
@@ -57,6 +59,8 @@
   --c-surface-dark-elevated: #141414;
   --c-success-text: #34d399;
   --c-error-text: #f87171;
+  --c-accent: #9aaaf0;
+  --c-accent-fill: #4f65b8;
   color-scheme: dark;
 }
 
@@ -80,6 +84,7 @@
   --color-on-dark: var(--c-on-dark);
   --color-on-dark-soft: var(--c-on-dark-soft);
   --color-accent: var(--c-accent);
+  --color-accent-fill: var(--c-accent-fill);
   --color-success: var(--c-success);
   --color-warning: var(--c-warning);
   --color-error: var(--c-error);
@@ -139,7 +144,7 @@ body {
 }
 
 ::selection {
-  background: var(--c-surface-strong);
+  background: color-mix(in srgb, var(--c-accent-fill) 22%, transparent);
   color: var(--c-ink);
 }
 
@@ -147,7 +152,7 @@ body {
    In the base layer so component utilities (e.g. inputs) can refine it. */
 @layer base {
   :focus-visible {
-    outline: 2px solid var(--c-ink);
+    outline: 2px solid var(--c-accent);
     outline-offset: 2px;
   }
 }
@@ -277,7 +282,7 @@ body {
   @apply grid size-9 shrink-0 cursor-pointer place-items-center rounded-full border border-hairline bg-canvas text-ink transition-colors active:bg-surface-soft;
 }
 @utility text-link {
-  @apply text-ink underline-offset-4 hover:underline;
+  @apply text-accent underline-offset-4 hover:underline;
 }
 @utility feature-card {
   @apply rounded-lg bg-surface-card p-8;
@@ -291,7 +296,7 @@ body {
   @apply rounded-xl border border-hairline bg-canvas shadow-elevated;
 }
 @utility input {
-  @apply h-10 w-full rounded-md border border-hairline bg-canvas px-3.5 text-base text-ink transition-[border-color,box-shadow] placeholder:text-muted focus:border-ink focus:shadow-[0_0_0_1px_var(--c-ink)] focus:outline-none aria-invalid:animate-shake aria-invalid:border-error;
+  @apply h-10 w-full rounded-md border border-hairline bg-canvas px-3.5 text-base text-ink transition-[border-color,box-shadow] placeholder:text-muted focus:border-accent focus:shadow-[0_0_0_1px_var(--c-accent)] focus:outline-none aria-invalid:animate-shake aria-invalid:border-error;
 }
 @utility label {
   @apply mb-1.5 block text-[14px] leading-snug font-medium text-ink;

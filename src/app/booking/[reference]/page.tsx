@@ -95,7 +95,7 @@ export default async function BookingPage({ params, searchParams }: PageProps<"/
                 aria-hidden
                 className={`flex w-14 shrink-0 flex-col overflow-hidden rounded-md border border-hairline text-center ${cancelled ? "opacity-50" : ""}`}
               >
-                <span className="bg-primary py-0.5 text-[11px] font-semibold tracking-wider text-on-primary uppercase">
+                <span className="bg-accent-fill py-0.5 text-[11px] font-semibold tracking-wider text-white uppercase">
                   {dateParts(booking.date).month}
                 </span>
                 <span className="py-1 font-display text-[24px] leading-tight text-ink">{dateParts(booking.date).day}</span>

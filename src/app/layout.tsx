@@ -67,7 +67,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           </a>
           <div className="border-b border-hairline-soft bg-surface-soft px-4 py-2 text-center caption text-muted">
             Demo site: {business.name} is a fictional salon showcasing{" "}
-            <a href={business.repoUrl} className="font-semibold text-ink underline underline-offset-2">
+            <a href={business.repoUrl} className="font-semibold text-accent underline underline-offset-2">
               Slotly
             </a>
             . Bookings aren&apos;t real appointments.

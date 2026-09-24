@@ -360,7 +360,9 @@ Tokens live once in `src/app/globals.css` as CSS variables, exposed to Tailwind 
 | `ink` | `#111111` | `#fafafa` | Headings and primary text |
 | `body` | `#374151` | `#d4d4d8` | Running text |
 | `muted` | `#6b7280` | `#a1a1aa` | Secondary text on white |
-| `primary` | `#111111` | `#ffffff` | Primary buttons, selected calendar day |
+| `primary` | `#111111` | `#ffffff` | Primary buttons |
+| `accent` | `#1b2a5e` | `#9aaaf0` | Brand accent (adire indigo): links, today marker, focus rings, active inputs |
+| `accent-fill` | `#1b2a5e` | `#4f65b8` | Filled accent states: selected calendar day, date tile, demo selection |
 | `surface-dark` | `#101010` | `#000000` | Footer, the only dark surface |
 | `success` / `error` | `#10b981` / `#ef4444` | same | Icons, borders and tinted backgrounds |
 | Badge pastels | orange, pink, violet, emerald | same | Avatar fills and confetti only, never on buttons |
@@ -398,6 +400,7 @@ Utilities mirror the spec's scale: `display-xl` (64px, -2px tracking) down to `d
 - **Faint grey.** `muted-soft` (`#898989`, 3.5:1) is used only for unavailable calendar days (disabled controls are exempt under WCAG 1.4.3) and on the dark footer (5.4:1). Placeholders use `muted`.
 - **Dark mode.** The spec is light-only. Slotly keeps an optional dark theme built from the spec's own dark surface tokens, with the primary colour inverted to white.
 - **Avatar initials** are `#111111` rather than white, because white fails contrast on the pastel fills.
+- **Indigo replaces the spec's blue accent.** The spec keeps a sparing `brand-accent` (`#3b82f6`) for links and highlights; Slotly fills that same role with adire indigo, so the booking flow echoes the motif. It's used for *state and navigation* (selected day, today, links, focus), never for primary actions, which stay near-black. In dark mode the text/link shade (`#9aaaf0`, 8.9:1) and fill shade (`#4f65b8`, white text 5.4:1, 3.3:1 against dark tiles) are lighter so they stay visible.
 
 ### Brand extension: the adire motif
 
@@ -450,6 +453,6 @@ The spec leaves animation out of scope and rules out hover effects, so motion is
 ### Interaction and accessibility
 
 - **Responsive.** Hamburger menu below 768px, opening a full-screen sheet anchored under the header. Grids collapse 3 → 2 → 1, and the three-pane booking widget stacks on phones.
-- **Keyboard.** A "Skip to content" link, a visible 2px focus outline on every control (in the base CSS layer, so components such as inputs can refine it), and native `<form>`, `<button>` and `<details>` elements.
+- **Keyboard.** A "Skip to content" link, a visible 2px indigo focus outline on every control (in the base CSS layer, so components such as inputs can refine it), and native `<form>`, `<button>` and `<details>` elements.
 - **Screen readers.** The calendar is a labelled grid ("Friday 25 September, available"), form errors are linked with `aria-describedby`, messages use `role="alert"` and `role="status"`, tabs use `role="tab"` with `aria-selected`, and loading skeletons set `aria-busy`.
 - **Touch.** Buttons and inputs are 40px tall, text links have 40px tap areas, and inputs use 16px text so iOS doesn't zoom on focus.
